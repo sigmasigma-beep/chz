@@ -13,94 +13,63 @@
     --dark: #1a0800;
     --card: #fffbe8;
     --accent: #e65c00;
-    --sky: #4fc3f7;
     --green: #27ae60;
     --red: #e74c3c;
     --purple: #8e44ad;
-    --bg1: #1a0800;
-    --bg2: #2d1200;
+    --blue: #2980b9;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: 'Nunito', sans-serif;
     background: radial-gradient(ellipse at top, #2d1500 0%, #0d0500 100%);
-    min-height: 100vh;
-    overflow-x: hidden;
-    color: #222;
+    min-height: 100vh; overflow-x: hidden; color: #222;
   }
+  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 
-  /* Floating cheese bg */
-  #bg-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 0;
-  }
-
-  /* ── Layout ─────────────────── */
-  .screen {
-    display: none; position: relative; z-index: 1;
-    min-height: 100vh; padding: 1rem;
-  }
+  .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
   .screen.active { display: block; }
-
-  /* ── Login Screen ───────────── */
-  #screen-login {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
+  #screen-login { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; min-height: 100vh; }
 
   .logo-wrap { text-align: center; margin-bottom: 2rem; }
   .logo-main {
     font-family: 'Fredoka One', cursive;
     font-size: clamp(2.5rem, 8vw, 5rem);
     background: linear-gradient(135deg, #FFD700, #FF8C00, #FFD700);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-    filter: drop-shadow(0 4px 12px rgba(255,140,0,0.5));
-    line-height: 1;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(0 4px 12px rgba(255,140,0,0.5)); line-height: 1;
   }
-  .logo-sub {
-    font-size: 1rem; color: #FFD700; opacity: 0.8;
-    letter-spacing: 3px; text-transform: uppercase; margin-top: 0.3rem;
-  }
+  .logo-sub { font-size: 1rem; color: #FFD700; opacity: 0.8; letter-spacing: 3px; text-transform: uppercase; margin-top: 0.3rem; }
   .logo-emoji { font-size: 3rem; margin-bottom: 0.5rem; display: block; }
 
   .card {
-    background: var(--card);
-    border-radius: 24px;
-    padding: 2rem;
+    background: var(--card); border-radius: 24px; padding: 2rem;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,200,0,0.3);
     width: 100%; max-width: 420px;
   }
+  .card h2 { font-family: 'Fredoka One', cursive; color: var(--accent); font-size: 1.6rem; margin-bottom: 1.5rem; text-align: center; }
+  .login-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .login-tab {
+    flex: 1; padding: 0.6rem; border-radius: 12px; cursor: pointer;
+    font-family: 'Fredoka One', cursive; font-size: 1rem; text-align: center;
+    background: #f0e0c0; color: var(--accent); border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .login-tab.active { background: linear-gradient(135deg, var(--orange), var(--accent)); color: #fff; }
 
-  .card h2 {
-    font-family: 'Fredoka One', cursive;
-    color: var(--accent); font-size: 1.6rem; margin-bottom: 1.5rem;
-    text-align: center;
+  label { display: block; font-weight: 700; color: #555; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem; margin-top: 1rem; }
+  input, select {
+    width: 100%; padding: 0.85rem 1rem; border: 2px solid #e0d0a0; border-radius: 12px;
+    font-size: 1rem; font-family: 'Nunito', sans-serif; font-weight: 700;
+    background: #fff; color: var(--dark); transition: border-color 0.2s, box-shadow 0.2s; outline: none;
   }
-
-  label {
-    display: block; font-weight: 700; color: #555;
-    font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;
-    margin-bottom: 0.4rem; margin-top: 1rem;
+  input:focus, select:focus { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(255,140,0,0.15); }
+  textarea {
+    width: 100%; padding: 0.85rem 1rem; border: 2px solid #e0d0a0; border-radius: 12px;
+    font-size: 1rem; font-family: 'Nunito', sans-serif; font-weight: 700;
+    background: #fff; color: var(--dark); outline: none; resize: vertical; min-height: 80px;
+    transition: border-color 0.2s;
   }
-
-  input {
-    width: 100%; padding: 0.85rem 1rem;
-    border: 2px solid #e0d0a0;
-    border-radius: 12px; font-size: 1rem;
-    font-family: 'Nunito', sans-serif; font-weight: 700;
-    background: #fff; color: var(--dark);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-  input:focus {
-    border-color: var(--orange);
-    box-shadow: 0 0 0 4px rgba(255,140,0,0.15);
-  }
-  input[type="password"] { letter-spacing: 4px; }
+  textarea:focus { border-color: var(--orange); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -109,131 +78,59 @@
     cursor: pointer; transition: all 0.18s; text-decoration: none;
     width: 100%; margin-top: 1.5rem;
   }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--orange), var(--accent));
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(230,92,0,0.4);
-  }
+  .btn-primary { background: linear-gradient(135deg, var(--orange), var(--accent)); color: #fff; box-shadow: 0 6px 20px rgba(230,92,0,0.4); }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(230,92,0,0.5); }
-  .btn-primary:active { transform: translateY(0); }
-
-  .btn-secondary {
-    background: #fff3d0; color: var(--accent);
-    border: 2px solid var(--cheese); margin-top: 0.75rem;
-  }
+  .btn-secondary { background: #fff3d0; color: var(--accent); border: 2px solid var(--cheese); margin-top: 0.75rem; }
   .btn-secondary:hover { background: #ffe9a0; }
+  .btn-green { background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+  .btn-red { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
+  .btn-purple { background: linear-gradient(135deg, #8e44ad, #6c3483); color: #fff; box-shadow: 0 6px 20px rgba(142,68,173,0.4); }
+  .btn-blue { background: linear-gradient(135deg, #2980b9, #1a5e8a); color: #fff; box-shadow: 0 6px 20px rgba(41,128,185,0.4); }
+  .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; width: auto; margin-top: 0; border-radius: 10px; }
+  .btn-xs { padding: 0.35rem 0.7rem; font-size: 0.75rem; width: auto; margin-top: 0; border-radius: 8px; }
 
-  .btn-green { background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff;
-    box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
-  .btn-red { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff;
-    box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
-  .btn-purple { background: linear-gradient(135deg, #8e44ad, #6c3483); color: #fff;
-    box-shadow: 0 6px 20px rgba(142,68,173,0.4); }
-  .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; width: auto; margin-top: 0; border-radius: 10px; }
+  .error-msg { background: #fde8e8; color: var(--red); border: 2px solid #f5c6c6; border-radius: 10px; padding: 0.7rem 1rem; margin-top: 1rem; font-weight: 700; font-size: 0.9rem; display: none; }
+  .success-msg { background: #e8fde8; color: var(--green); border: 2px solid #c6f5c6; border-radius: 10px; padding: 0.7rem 1rem; margin-top: 1rem; font-weight: 700; font-size: 0.9rem; display: none; }
 
-  .error-msg {
-    background: #fde8e8; color: var(--red);
-    border: 2px solid #f5c6c6; border-radius: 10px;
-    padding: 0.7rem 1rem; margin-top: 1rem;
-    font-weight: 700; font-size: 0.9rem; display: none;
-  }
-  .success-msg {
-    background: #e8fde8; color: var(--green);
-    border: 2px solid #c6f5c6; border-radius: 10px;
-    padding: 0.7rem 1rem; margin-top: 1rem;
-    font-weight: 700; font-size: 0.9rem; display: none;
-  }
-
-  /* ── Main App ───────────────── */
+  /* ── App ── */
   #screen-app { padding: 0; }
-
   .app-header {
     background: linear-gradient(135deg, #1a0800, #2d1200);
-    border-bottom: 3px solid var(--orange);
-    padding: 1rem 1.5rem;
+    border-bottom: 3px solid var(--orange); padding: 1rem 1.5rem;
     display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
-
-  .app-logo {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.6rem;
-    background: linear-gradient(135deg, #FFD700, #FF8C00);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-user {
-    text-align: right; color: #FFD700;
-    font-size: 0.8rem; font-weight: 700;
-    line-height: 1.3;
-  }
+  .app-logo { font-family: 'Fredoka One', cursive; font-size: 1.6rem; background: linear-gradient(135deg, #FFD700, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-user { text-align: right; color: #FFD700; font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
   .header-user span { display: block; color: #fff; font-size: 0.95rem; }
 
-  /* Balance card */
+  .app-content { padding-bottom: 90px; }
+
   .balance-section {
     background: linear-gradient(135deg, var(--orange), var(--accent));
-    margin: 1.5rem; border-radius: 24px;
-    padding: 2rem; text-align: center;
-    box-shadow: 0 10px 40px rgba(230,92,0,0.4);
-    position: relative; overflow: hidden;
+    margin: 1.5rem; border-radius: 24px; padding: 2rem; text-align: center;
+    box-shadow: 0 10px 40px rgba(230,92,0,0.4); position: relative; overflow: hidden;
   }
-  .balance-section::before {
-    content: '🧀'; position: absolute; font-size: 8rem;
-    right: -1.5rem; top: -1rem; opacity: 0.15;
-  }
-  .balance-label {
-    color: rgba(255,255,255,0.8); font-size: 0.85rem;
-    letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
-  }
-  .balance-amount {
-    font-family: 'Fredoka One', cursive;
-    font-size: clamp(2.5rem, 8vw, 4rem);
-    color: #fff; line-height: 1.1; margin: 0.3rem 0;
-  }
+  .balance-section::before { content: '🧀'; position: absolute; font-size: 8rem; right: -1.5rem; top: -1rem; opacity: 0.15; }
+  .balance-label { color: rgba(255,255,255,0.8); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
+  .balance-amount { font-family: 'Fredoka One', cursive; font-size: clamp(2.5rem, 8vw, 4rem); color: #fff; line-height: 1.1; margin: 0.3rem 0; }
   .balance-unit { color: rgba(255,255,255,0.75); font-size: 0.9rem; font-weight: 700; }
-  .cred-badge {
-    display: inline-block; background: rgba(255,255,255,0.2);
-    border-radius: 20px; padding: 0.3rem 1rem;
-    color: #fff; font-size: 0.8rem; font-weight: 700;
-    letter-spacing: 2px; margin-top: 0.8rem;
-  }
+  .cred-badge { display: inline-block; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 0.3rem 1rem; color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; margin-top: 0.8rem; }
 
-  /* Action buttons row */
-  .action-row {
-    display: flex; gap: 1rem; padding: 0 1.5rem;
-    margin-bottom: 1.5rem;
-  }
+  .action-row { display: flex; gap: 0.75rem; padding: 0 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
   .action-btn {
-    flex: 1; background: var(--card);
-    border-radius: 18px; padding: 1.2rem 0.5rem;
-    text-align: center; cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    flex: 1; min-width: 70px; background: var(--card); border-radius: 18px; padding: 1rem 0.5rem;
+    text-align: center; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     transition: all 0.18s; border: 2px solid transparent;
   }
   .action-btn:hover { transform: translateY(-3px); border-color: var(--orange); }
-  .action-btn .ab-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
-  .action-btn .ab-label {
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.9rem; color: var(--accent);
-  }
+  .action-btn .ab-icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+  .action-btn .ab-label { font-family: 'Fredoka One', cursive; font-size: 0.8rem; color: var(--accent); }
 
-  /* Transactions */
-  .section-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.3rem; color: #FFD700;
-    padding: 0 1.5rem; margin-bottom: 1rem;
-  }
+  .section-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #FFD700; padding: 0 1.5rem; margin-bottom: 1rem; }
 
   .tx-list { padding: 0 1.5rem 2rem; }
-  .tx-item {
-    background: var(--card); border-radius: 16px;
-    padding: 1rem 1.2rem; margin-bottom: 0.75rem;
-    display: flex; align-items: center; gap: 1rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    border-left: 5px solid transparent;
-  }
+  .tx-item { background: var(--card); border-radius: 16px; padding: 1rem 1.2rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 5px solid transparent; }
   .tx-item.received { border-left-color: var(--green); }
   .tx-item.sent { border-left-color: var(--red); }
   .tx-icon { font-size: 1.8rem; }
@@ -241,105 +138,112 @@
   .tx-name { font-weight: 800; font-size: 0.95rem; color: var(--dark); }
   .tx-msg { font-size: 0.8rem; color: #888; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tx-date { font-size: 0.75rem; color: #aaa; }
-  .tx-amount {
-    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
-    white-space: nowrap;
-  }
+  .tx-amount { font-family: 'Fredoka One', cursive; font-size: 1.2rem; white-space: nowrap; }
   .tx-amount.pos { color: var(--green); }
   .tx-amount.neg { color: var(--red); }
   .tx-empty { text-align: center; color: #ccc; padding: 2rem; font-weight: 700; }
 
-  /* ── Modal / Panel ──────────── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7); z-index: 500;
-    align-items: center; justify-content: center;
-    padding: 1rem;
+  /* ── Directory Screen ── */
+  #screen-directory { padding: 0; }
+  .dir-header {
+    background: linear-gradient(135deg, #0a1a2e, #142840);
+    border-bottom: 3px solid var(--blue); padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
-  .modal-overlay.active { display: flex; }
+  .dir-header h1 { font-family: 'Fredoka One', cursive; background: linear-gradient(135deg, #74b9ff, #2980b9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.5rem; flex: 1; }
+  .dir-search { padding: 1rem 1.5rem; }
+  .dir-list { padding: 0 1.5rem 2rem; }
+  .dir-item { background: var(--card); border-radius: 14px; padding: 0.9rem 1.2rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid var(--blue); }
+  .dir-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--accent)); display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; color: #fff; font-size: 1.1rem; flex-shrink: 0; }
+  .dir-name { font-weight: 800; color: var(--dark); font-size: 0.95rem; }
+  .dir-id { font-size: 0.8rem; color: #888; margin-top: 0.1rem; }
+  .dir-badge { font-size: 0.7rem; background: #fff3d0; color: var(--accent); border-radius: 8px; padding: 0.15rem 0.5rem; font-weight: 700; }
+  .admin-badge { background: #f0e0ff; color: var(--purple); }
 
-  .modal {
-    background: var(--card); border-radius: 24px;
-    padding: 2rem; width: 100%; max-width: 440px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    position: relative; max-height: 90vh; overflow-y: auto;
-  }
-  .modal h2 {
-    font-family: 'Fredoka One', cursive;
-    color: var(--accent); font-size: 1.5rem;
-    margin-bottom: 1.5rem; text-align: center;
-  }
-  .modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: #f0e0c0; border: none; border-radius: 50%;
-    width: 32px; height: 32px; font-size: 1rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    color: var(--accent); font-weight: 900;
-  }
+  /* ── Modals ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--card); border-radius: 24px; padding: 2rem; width: 100%; max-width: 440px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-family: 'Fredoka One', cursive; color: var(--accent); font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: #f0e0c0; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 900; }
   .modal-close:hover { background: var(--orange); color: #fff; }
 
-  .lookup-result {
-    background: #fff3d0; border: 2px solid var(--cheese);
-    border-radius: 12px; padding: 0.8rem 1rem;
-    margin-top: 0.5rem; font-weight: 700; color: var(--dark);
-    display: none;
-  }
+  .lookup-result { background: #fff3d0; border: 2px solid var(--cheese); border-radius: 12px; padding: 0.8rem 1rem; margin-top: 0.5rem; font-weight: 700; color: var(--dark); display: none; }
 
-  /* ── Gift Box Animation ─────── */
-  #gift-overlay {
-    display: none; position: fixed; inset: 0; z-index: 1000;
-    pointer-events: none;
+  /* ── Admin Panel ── */
+  #screen-admin { padding: 0; }
+  #admin-lock-overlay {
+    position: fixed; inset: 0; background: rgba(10,0,30,0.97); z-index: 900;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
   }
+  #admin-lock-overlay .lock-icon { font-size: 4rem; }
+  #admin-lock-overlay h2 { font-family: 'Fredoka One', cursive; color: #da8fff; font-size: 1.8rem; }
+  #admin-lock-overlay p { color: #aaa; font-size: 0.9rem; }
+  #admin-lock-overlay input { max-width: 240px; text-align: center; letter-spacing: 6px; font-size: 1.4rem; }
+
+  .admin-header {
+    background: linear-gradient(135deg, #1a0020, #2d0040);
+    border-bottom: 3px solid var(--purple); padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .admin-header h1 { font-family: 'Fredoka One', cursive; background: linear-gradient(135deg, #da8fff, #9b59b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.5rem; flex: 1; }
+
+  .admin-tabs { display: flex; gap: 0.4rem; padding: 1rem 1.5rem; overflow-x: auto; }
+  .admin-tab {
+    padding: 0.45rem 1rem; border-radius: 20px; background: rgba(255,255,255,0.08); color: #bbb;
+    border: 2px solid transparent; cursor: pointer; font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+    white-space: nowrap; transition: all 0.18s;
+  }
+  .admin-tab.active, .admin-tab:hover { background: var(--purple); color: #fff; border-color: #da8fff; }
+
+  .admin-panel { padding: 0 1.5rem 2rem; display: none; }
+  .admin-panel.active { display: block; }
+
+  .admin-card { background: var(--card); border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  .admin-card h3 { font-family: 'Fredoka One', cursive; color: var(--purple); font-size: 1.2rem; margin-bottom: 1rem; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+  .stat-box { background: var(--card); border-radius: 16px; padding: 1rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  .stat-box .sv { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--accent); }
+  .stat-box .sl { font-size: 0.72rem; color: #888; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem; }
+
+  .stock-bar-wrap { background: #f0e8d0; border-radius: 12px; height: 18px; margin: 0.75rem 0; overflow: hidden; }
+  .stock-bar { background: linear-gradient(90deg, var(--green), var(--orange)); height: 100%; border-radius: 12px; transition: width 0.5s; }
+
+  .account-row { background: #f8f0ff; border-radius: 14px; padding: 0.9rem 1.1rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.75rem; border-left: 4px solid var(--purple); }
+  .account-row .ar-info { flex: 1; min-width: 0; }
+  .account-row .ar-name { font-weight: 800; font-size: 0.9rem; }
+  .account-row .ar-id { font-size: 0.75rem; color: #888; }
+  .account-row .ar-bal { font-family: 'Fredoka One', cursive; color: var(--green); font-size: 1rem; white-space: nowrap; }
+  .account-row .ar-actions { display: flex; gap: 0.35rem; }
+
+  .divider { border: none; border-top: 2px dashed #e0d0a0; margin: 1.2rem 0; }
+
+  /* ── Gift Animations ── */
+  #gift-overlay { display: none; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
   #gift-overlay.active { display: block; }
-
-  .gift-box {
-    position: absolute; font-size: 4rem;
-    animation: giftFly 2.5s ease-in forwards;
-    filter: drop-shadow(0 8px 20px rgba(255,200,0,0.8));
-  }
+  .gift-box { position: absolute; font-size: 4rem; animation: giftFly 2.5s ease-in forwards; filter: drop-shadow(0 8px 20px rgba(255,200,0,0.8)); }
   @keyframes giftFly {
     0%   { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
     30%  { transform: scale(1.3) translateY(-80px) rotate(-10deg); opacity: 1; }
     60%  { transform: scale(0.9) translateY(-250px) rotate(15deg); opacity: 0.9; }
     100% { transform: scale(0.2) translateY(-700px) rotate(30deg); opacity: 0; }
   }
-
-  .gift-sparkle {
-    position: absolute; font-size: 1.5rem;
-    animation: sparklePop 1.2s ease-out forwards;
-  }
+  .gift-sparkle { position: absolute; font-size: 1.5rem; animation: sparklePop 1.2s ease-out forwards; }
   @keyframes sparklePop {
     0%   { transform: scale(0) translate(0,0); opacity: 1; }
     60%  { opacity: 1; }
     100% { transform: scale(1.5) translate(var(--dx), var(--dy)); opacity: 0; }
   }
-
-  .gift-receive-anim {
-    position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 5rem; z-index: 1001;
-    animation: giftDrop 2s ease-out forwards;
-    pointer-events: none;
-    filter: drop-shadow(0 12px 30px rgba(255,200,0,0.9));
-  }
-  @keyframes giftDrop {
-    0%   { transform: translate(-50%, calc(-50% - 300px)) scale(0.3); opacity: 0; }
-    40%  { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-    60%  { transform: translate(-50%, -50%) scale(0.95); }
-    80%  { transform: translate(-50%, -50%) scale(1.1); }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  }
-
   .gift-msg-popup {
-    position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, 40px);
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, 40px);
     background: linear-gradient(135deg, var(--orange), var(--accent));
     color: #fff; border-radius: 20px; padding: 1rem 2rem;
     font-family: 'Fredoka One', cursive; font-size: 1.4rem;
     z-index: 1002; pointer-events: none;
     box-shadow: 0 10px 40px rgba(230,92,0,0.6);
-    animation: popIn 2.5s ease forwards;
-    text-align: center; white-space: nowrap;
+    animation: popIn 2.5s ease forwards; text-align: center; white-space: nowrap;
   }
   @keyframes popIn {
     0%   { opacity: 0; transform: translate(-50%, 40px) scale(0.7); }
@@ -348,112 +252,22 @@
     100% { opacity: 0; transform: translate(-50%, -20px) scale(0.9); }
   }
 
-  /* ── Admin Panel ────────────── */
-  #screen-admin { padding: 0; }
+  /* Edit modal */
+  #edit-modal .modal { max-width: 400px; }
 
-  .admin-header {
-    background: linear-gradient(135deg, #1a0020, #2d0040);
-    border-bottom: 3px solid var(--purple);
-    padding: 1rem 1.5rem;
-    display: flex; align-items: center; gap: 1rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  }
-  .admin-header h1 {
-    font-family: 'Fredoka One', cursive;
-    background: linear-gradient(135deg, #da8fff, #9b59b6);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; font-size: 1.5rem; flex: 1;
-  }
-
-  .admin-tabs {
-    display: flex; gap: 0.5rem; padding: 1rem 1.5rem;
-    overflow-x: auto;
-  }
-  .admin-tab {
-    padding: 0.5rem 1.2rem; border-radius: 20px;
-    background: rgba(255,255,255,0.1); color: #ccc;
-    border: 2px solid transparent; cursor: pointer;
-    font-family: 'Fredoka One', cursive; font-size: 0.9rem;
-    white-space: nowrap; transition: all 0.18s;
-  }
-  .admin-tab.active, .admin-tab:hover {
-    background: var(--purple); color: #fff;
-    border-color: #da8fff;
-  }
-
-  .admin-panel { padding: 0 1.5rem 2rem; display: none; }
-  .admin-panel.active { display: block; }
-
-  .admin-card {
-    background: var(--card); border-radius: 20px;
-    padding: 1.5rem; margin-bottom: 1rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .admin-card h3 {
-    font-family: 'Fredoka One', cursive;
-    color: var(--purple); font-size: 1.2rem; margin-bottom: 1rem;
-  }
-
-  .account-row {
-    background: #f8f0ff; border-radius: 14px;
-    padding: 0.9rem 1.1rem; margin-bottom: 0.6rem;
-    display: flex; align-items: center; gap: 1rem;
-    border-left: 4px solid var(--purple);
-  }
-  .account-row .ar-name { font-weight: 800; flex: 1; }
-  .account-row .ar-id { font-size: 0.8rem; color: #888; }
-  .account-row .ar-bal {
-    font-family: 'Fredoka One', cursive;
-    color: var(--green); font-size: 1.1rem;
-  }
-
-  /* Nav bottom */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: #1a0800; border-top: 2px solid var(--orange);
-    display: flex; z-index: 200;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-  }
-  .nav-btn {
-    flex: 1; padding: 0.8rem 0.5rem;
-    text-align: center; cursor: pointer;
-    color: #664400; transition: all 0.18s;
-    font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.5px; text-transform: uppercase;
-  }
-  .nav-btn:hover, .nav-btn.active { color: var(--yellow); }
-  .nav-btn .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 0.2rem; }
-
-  /* Tabs within app */
-  .app-content { padding-bottom: 80px; }
-
-  /* Stats badge */
-  .stat-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 0.75rem; margin-bottom: 1.5rem;
-  }
-  .stat-box {
-    background: var(--card); border-radius: 16px;
-    padding: 1rem; text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  }
-  .stat-box .sv { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: var(--accent); }
-  .stat-box .sl { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; }
-
-  /* Responsive */
   @media (max-width: 480px) {
     .card { padding: 1.5rem; }
     .balance-section { margin: 1rem; padding: 1.5rem; }
     .action-row { padding: 0 1rem; }
-    .tx-list { padding: 0 1rem 2rem; }
+    .tx-list, .dir-list { padding: 0 1rem 2rem; }
+    .admin-tabs { padding: 0.75rem 1rem; }
   }
 </style>
 </head>
 <body>
-
 <canvas id="bg-canvas"></canvas>
 
-<!-- ══════════════ LOGIN ══════════════ -->
+<!-- ══ LOGIN / REGISTER ══ -->
 <div class="screen active" id="screen-login">
   <div class="logo-wrap">
     <span class="logo-emoji">🧀</span>
@@ -461,17 +275,40 @@
     <div class="logo-sub">Digital Currency</div>
   </div>
   <div class="card">
-    <h2>Sign In</h2>
-    <label>Cred ID (8 digits)</label>
-    <input type="text" id="login-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
-    <label>Protection ID (4 digits)</label>
-    <input type="password" id="login-pid" maxlength="4" placeholder="••••" inputmode="numeric">
-    <div class="error-msg" id="login-error"></div>
-    <button class="btn btn-primary" onclick="doLogin()">🧀 Sign In</button>
+    <div class="login-tabs">
+      <div class="login-tab active" id="tab-signin" onclick="switchLoginTab('signin')">Sign In</div>
+      <div class="login-tab" id="tab-register" onclick="switchLoginTab('register')">Make Account</div>
+    </div>
+
+    <!-- Sign In -->
+    <div id="panel-signin">
+      <label>Cred ID (8 digits)</label>
+      <input type="text" id="login-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+      <label>Protection ID (4–8 digits)</label>
+      <input type="password" id="login-pid" maxlength="8" placeholder="••••" inputmode="numeric">
+      <div class="error-msg" id="login-error"></div>
+      <button class="btn btn-primary" onclick="doLogin()">🧀 Sign In</button>
+    </div>
+
+    <!-- Register -->
+    <div id="panel-register" style="display:none">
+      <label>First Name</label>
+      <input type="text" id="reg-first" placeholder="John">
+      <label>Last Name</label>
+      <input type="text" id="reg-last" placeholder="Smith">
+      <label>Choose a Cred ID (8 digits)</label>
+      <input type="text" id="reg-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+      <label>Choose a Protection ID (4–8 digits)</label>
+      <input type="password" id="reg-pid" maxlength="8" placeholder="••••" inputmode="numeric">
+      <input type="password" id="reg-pid2" maxlength="8" placeholder="Confirm Protection ID" inputmode="numeric" style="margin-top:0.5rem">
+      <div class="error-msg" id="reg-error"></div>
+      <div class="success-msg" id="reg-success"></div>
+      <button class="btn btn-green" onclick="doRegister()">✨ Create My Account</button>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════ MAIN APP ══════════════ -->
+<!-- ══ MAIN APP ══ -->
 <div class="screen" id="screen-app">
   <div class="app-header">
     <div class="app-logo">🧀 Cheezy Poof</div>
@@ -480,9 +317,7 @@
       <span id="header-credid" style="font-size:0.72rem;color:#ffaa44"></span>
     </div>
   </div>
-
   <div class="app-content">
-    <!-- Balance -->
     <div class="balance-section">
       <div class="balance-label">Your Balance</div>
       <div class="balance-amount" id="balance-display">0</div>
@@ -490,11 +325,14 @@
       <div class="cred-badge" id="balance-credid">CRED #––––––––</div>
     </div>
 
-    <!-- Actions -->
     <div class="action-row">
       <div class="action-btn" onclick="openSendModal()">
-        <span class="ab-icon">🎁</span>
-        <span class="ab-label">Send Gift</span>
+        <span class="ab-icon">🧀</span>
+        <span class="ab-label">Send Poofs</span>
+      </div>
+      <div class="action-btn" onclick="goDirectory()">
+        <span class="ab-icon">👥</span>
+        <span class="ab-label">Accounts</span>
       </div>
       <div class="action-btn" onclick="refreshData()">
         <span class="ab-icon">🔄</span>
@@ -510,174 +348,275 @@
       </div>
     </div>
 
-    <!-- Transactions -->
     <div class="section-title">📜 Recent Transactions</div>
     <div class="tx-list" id="tx-list">
-      <div class="tx-empty">No transactions yet.<br>Send your first gift! 🎁</div>
+      <div class="tx-empty">No transactions yet.<br>Send your first Poofs! 🧀</div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════ ADMIN ══════════════ -->
-<div class="screen" id="screen-admin">
-  <div class="admin-header">
+<!-- ══ DIRECTORY ══ -->
+<div class="screen" id="screen-directory">
+  <div class="dir-header">
     <button class="btn btn-secondary btn-sm" onclick="goApp()" style="width:auto;margin-top:0">← Back</button>
-    <h1>🔐 Admin Panel</h1>
+    <h1>👥 Accounts Directory</h1>
   </div>
-
-  <div class="admin-tabs">
-    <div class="admin-tab active" onclick="adminTab('accounts')">👥 Accounts</div>
-    <div class="admin-tab" onclick="adminTab('give')">💰 Give Money</div>
-    <div class="admin-tab" onclick="adminTab('create')">➕ New Account</div>
-    <div class="admin-tab" onclick="adminTab('txlog')">📋 TX Log</div>
+  <div class="dir-search">
+    <input type="text" id="dir-search" placeholder="🔍 Search by name or Cred ID…" oninput="filterDirectory()">
   </div>
-
-  <!-- Accounts tab -->
-  <div class="admin-panel active" id="apanel-accounts">
-    <div class="stat-grid" id="admin-stats"></div>
-    <div id="admin-accounts-list"></div>
-  </div>
-
-  <!-- Give money tab -->
-  <div class="admin-panel" id="apanel-give">
-    <div class="admin-card">
-      <h3>💰 Give / Remove Money</h3>
-      <label>Recipient Cred ID</label>
-      <input type="text" id="give-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
-      <div class="lookup-result" id="give-lookup"></div>
-      <label>Amount (use negative to remove)</label>
-      <input type="number" id="give-amount" placeholder="e.g. 500 or -100">
-      <div class="error-msg" id="give-error"></div>
-      <div class="success-msg" id="give-success"></div>
-      <button class="btn btn-green" onclick="adminGive()">💸 Apply</button>
-    </div>
-  </div>
-
-  <!-- Create account tab -->
-  <div class="admin-panel" id="apanel-create">
-    <div class="admin-card">
-      <h3>➕ Create New Account</h3>
-      <label>First Name</label>
-      <input type="text" id="new-first" placeholder="John">
-      <label>Last Name</label>
-      <input type="text" id="new-last" placeholder="Smith">
-      <label>Cred ID (8 digits)</label>
-      <input type="text" id="new-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
-      <label>Protection ID (4 digits)</label>
-      <input type="text" id="new-pid" maxlength="4" placeholder="1234" inputmode="numeric">
-      <label>Starting Balance</label>
-      <input type="number" id="new-balance" placeholder="0" value="0">
-      <div class="error-msg" id="create-error"></div>
-      <div class="success-msg" id="create-success"></div>
-      <button class="btn btn-purple" onclick="adminCreate()">✨ Create Account</button>
-    </div>
-  </div>
-
-  <!-- TX log tab -->
-  <div class="admin-panel" id="apanel-txlog">
-    <div id="admin-tx-list"></div>
+  <div class="dir-list" id="dir-list">
+    <div class="tx-empty">Loading…</div>
   </div>
 </div>
 
-<!-- ══════════════ SEND MODAL ══════════════ -->
+<!-- ══ ADMIN ══ -->
+<div class="screen" id="screen-admin">
+  <!-- Lock overlay -->
+  <div id="admin-lock-overlay">
+    <div class="lock-icon">🔐</div>
+    <h2>Admin Access</h2>
+    <p>Enter the 6-digit admin code to continue</p>
+    <input type="password" id="admin-code-input" maxlength="6" placeholder="• • • • • •" inputmode="numeric" style="max-width:200px;text-align:center;letter-spacing:6px;font-size:1.4rem">
+    <div class="error-msg" id="admin-code-error" style="max-width:300px"></div>
+    <button class="btn btn-purple btn-sm" onclick="checkAdminCode()" style="width:auto;margin-top:1rem">Unlock 🔓</button>
+    <button class="btn btn-secondary btn-sm" onclick="goApp()" style="width:auto;margin-top:0.5rem">← Cancel</button>
+  </div>
+
+  <div id="admin-content" style="display:none">
+    <div class="admin-header">
+      <button class="btn btn-secondary btn-sm" onclick="goApp()" style="width:auto;margin-top:0">← Back</button>
+      <h1>🔐 Admin Panel</h1>
+      <button class="btn btn-secondary btn-sm" onclick="lockAdmin()" style="width:auto;margin-top:0">🔒 Lock</button>
+    </div>
+
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="adminTab('dashboard')">📊 Dashboard</div>
+      <div class="admin-tab" onclick="adminTab('accounts')">👥 Accounts</div>
+      <div class="admin-tab" onclick="adminTab('give')">💰 Give/Take</div>
+      <div class="admin-tab" onclick="adminTab('bulk')">📢 Bulk Give</div>
+      <div class="admin-tab" onclick="adminTab('create')">➕ New Account</div>
+      <div class="admin-tab" onclick="adminTab('stock')">🏦 CP Stock</div>
+      <div class="admin-tab" onclick="adminTab('txlog')">📋 TX Log</div>
+      <div class="admin-tab" onclick="adminTab('danger')">⚠️ Danger Zone</div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="admin-panel active" id="apanel-dashboard">
+      <div class="stat-grid" id="admin-stats-grid"></div>
+      <div class="admin-card" id="admin-richest-card" style="display:none">
+        <h3>🏆 Top Holders</h3>
+        <div id="admin-top-holders"></div>
+      </div>
+    </div>
+
+    <!-- Accounts -->
+    <div class="admin-panel" id="apanel-accounts">
+      <div class="admin-card" style="padding:1rem">
+        <input type="text" id="admin-search" placeholder="🔍 Search accounts…" oninput="adminSearchAccounts()" style="margin-top:0">
+      </div>
+      <div id="admin-accounts-list"></div>
+    </div>
+
+    <!-- Give / Take -->
+    <div class="admin-panel" id="apanel-give">
+      <div class="admin-card">
+        <h3>💰 Give / Remove Poofs</h3>
+        <label>Recipient Cred ID</label>
+        <input type="text" id="give-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+        <div class="lookup-result" id="give-lookup"></div>
+        <label>Amount (negative = remove)</label>
+        <input type="number" id="give-amount" placeholder="e.g. 500 or -100">
+        <label>Reason (optional)</label>
+        <input type="text" id="give-reason" placeholder="e.g. Weekly bonus">
+        <div class="error-msg" id="give-error"></div>
+        <div class="success-msg" id="give-success"></div>
+        <button class="btn btn-green" onclick="adminGive()">💸 Apply</button>
+      </div>
+      <div class="admin-card">
+        <h3>🔄 Reset Balance to Zero</h3>
+        <label>Cred ID</label>
+        <input type="text" id="reset-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+        <div class="lookup-result" id="reset-lookup"></div>
+        <div class="error-msg" id="reset-error"></div>
+        <div class="success-msg" id="reset-success"></div>
+        <button class="btn btn-red" onclick="adminReset()">⚠️ Reset to 0 CP</button>
+      </div>
+    </div>
+
+    <!-- Bulk Give -->
+    <div class="admin-panel" id="apanel-bulk">
+      <div class="admin-card">
+        <h3>📢 Bulk Give to ALL Users</h3>
+        <p style="color:#888;font-size:0.85rem;margin-bottom:1rem">This gives (or removes) CP from every non-admin account at once.</p>
+        <label>Amount per person (negative = remove)</label>
+        <input type="number" id="bulk-amount" placeholder="e.g. 100">
+        <label>Reason</label>
+        <input type="text" id="bulk-reason" placeholder="e.g. Monthly allowance">
+        <div class="error-msg" id="bulk-error"></div>
+        <div class="success-msg" id="bulk-success"></div>
+        <button class="btn btn-purple" onclick="adminBulkGive()">📢 Apply to All</button>
+      </div>
+    </div>
+
+    <!-- Create account -->
+    <div class="admin-panel" id="apanel-create">
+      <div class="admin-card">
+        <h3>➕ Create New Account</h3>
+        <label>First Name</label>
+        <input type="text" id="new-first" placeholder="John">
+        <label>Last Name</label>
+        <input type="text" id="new-last" placeholder="Smith">
+        <label>Cred ID (8 digits)</label>
+        <input type="text" id="new-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+        <label>Protection ID (4–8 digits)</label>
+        <input type="text" id="new-pid" maxlength="8" placeholder="1234" inputmode="numeric">
+        <label>Starting Balance</label>
+        <input type="number" id="new-balance" placeholder="0" value="0">
+        <label>Admin Account?</label>
+        <select id="new-isadmin">
+          <option value="false">No — Regular user</option>
+          <option value="true">Yes — Admin</option>
+        </select>
+        <div class="error-msg" id="create-error"></div>
+        <div class="success-msg" id="create-success"></div>
+        <button class="btn btn-purple" onclick="adminCreate()">✨ Create Account</button>
+      </div>
+    </div>
+
+    <!-- CP Stock -->
+    <div class="admin-panel" id="apanel-stock">
+      <div class="admin-card">
+        <h3>🏦 Cheezy Poof Stock / Treasury</h3>
+        <p style="color:#888;font-size:0.85rem;margin-bottom:1rem">Set the total CP minted in the economy. This is a display number only — it doesn't affect balances.</p>
+        <div id="stock-display" style="text-align:center;margin:1rem 0">
+          <div style="font-family:'Fredoka One',cursive;font-size:2.5rem;color:var(--orange)" id="stock-number">–</div>
+          <div style="color:#888;font-size:0.8rem">CP in existence</div>
+          <div class="stock-bar-wrap" style="margin-top:0.75rem">
+            <div class="stock-bar" id="stock-bar" style="width:0%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#aaa">
+            <span>0</span><span id="stock-bar-pct">–</span><span id="stock-max-label">–</span>
+          </div>
+        </div>
+        <hr class="divider">
+        <label>Set New Stock Total</label>
+        <input type="number" id="new-stock" placeholder="e.g. 1000000">
+        <div class="error-msg" id="stock-error"></div>
+        <div class="success-msg" id="stock-success"></div>
+        <button class="btn btn-orange btn-primary" onclick="adminSetStock()">🏦 Update Stock</button>
+      </div>
+    </div>
+
+    <!-- TX Log -->
+    <div class="admin-panel" id="apanel-txlog">
+      <div id="admin-tx-list"></div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="admin-panel" id="apanel-danger">
+      <div class="admin-card" style="border: 3px solid var(--red)">
+        <h3 style="color:var(--red)">⚠️ Danger Zone</h3>
+        <p style="color:#888;font-size:0.85rem;margin-bottom:1rem">These actions are permanent and cannot be undone.</p>
+        <div style="display:flex;flex-direction:column;gap:0.75rem">
+          <button class="btn btn-red btn-sm" onclick="adminClearTx()" style="width:100%;margin-top:0">🗑 Clear All Transaction History</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SEND MODAL ══ -->
 <div class="modal-overlay" id="send-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeSendModal()">✕</button>
-    <h2>🎁 Send a Gift Box</h2>
+    <h2>🧀 Send Poofs</h2>
     <label>Recipient Cred ID</label>
     <input type="text" id="send-credid" maxlength="8" placeholder="12345678" inputmode="numeric" oninput="lookupRecipient()">
     <div class="lookup-result" id="send-lookup"></div>
     <label>Amount (Cheezy Poofs)</label>
     <input type="number" id="send-amount" placeholder="e.g. 100" min="1">
     <label>Message (optional)</label>
-    <input type="text" id="send-msg" placeholder="Happy Birthday! 🎉" maxlength="60">
+    <input type="text" id="send-msg" placeholder="Here ya go! 🧀" maxlength="60">
     <div class="error-msg" id="send-error"></div>
-    <button class="btn btn-primary" onclick="doSend()">🎁 Launch Gift Box!</button>
+    <button class="btn btn-primary" onclick="doSend()">🧀 Send Poofs!</button>
     <button class="btn btn-secondary" onclick="closeSendModal()">Cancel</button>
   </div>
 </div>
 
-<!-- ══════════════ GIFT ANIMATIONS ══════════════ -->
+<!-- ══ EDIT ACCOUNT MODAL ══ -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <h2>✏️ Edit Account</h2>
+    <input type="hidden" id="edit-credid">
+    <label>First Name</label>
+    <input type="text" id="edit-first">
+    <label>Last Name</label>
+    <input type="text" id="edit-last">
+    <label>Protection ID (4–8 digits, leave blank to keep)</label>
+    <input type="password" id="edit-pid" maxlength="8" placeholder="Leave blank to keep">
+    <label>Notes (admin only)</label>
+    <textarea id="edit-notes" placeholder="Internal notes…"></textarea>
+    <div class="error-msg" id="edit-error"></div>
+    <div class="success-msg" id="edit-success"></div>
+    <button class="btn btn-primary" onclick="adminSaveEdit()">💾 Save Changes</button>
+    <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ GIFT ANIMATION ══ -->
 <div id="gift-overlay"></div>
 
 <script>
-// ─── State ──────────────────────────────────────────────
-let session = null; // { credId, protectionId, firstName, lastName, balance, isAdmin }
+// ─── State ────────────────────────────────────────────────
+let session = null;
 let lookupTimer = null;
+let dirData = [];
+let adminUnlocked = false;
 
-// ─── Animated cheese background ─────────────────────────
+// ─── Cheese BG ────────────────────────────────────────────
 (function() {
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
   const bits = [];
   const chars = ['🧀','✨','🌟','💛','⭐'];
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
   for (let i = 0; i < 18; i++) {
-    bits.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      speed: 0.3 + Math.random() * 0.5,
-      char: chars[Math.floor(Math.random() * chars.length)],
-      size: 16 + Math.random() * 20,
-      rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.02,
-      opacity: 0.04 + Math.random() * 0.06
-    });
+    bits.push({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, speed: 0.3+Math.random()*0.5, char: chars[Math.floor(Math.random()*chars.length)], size: 16+Math.random()*20, rot: Math.random()*Math.PI*2, rotSpeed: (Math.random()-0.5)*0.02, opacity: 0.04+Math.random()*0.06 });
   }
-
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     bits.forEach(b => {
-      b.y -= b.speed;
-      b.rot += b.rotSpeed;
-      if (b.y < -40) { b.y = canvas.height + 40; b.x = Math.random() * canvas.width; }
-      ctx.save();
-      ctx.globalAlpha = b.opacity;
-      ctx.translate(b.x, b.y);
-      ctx.rotate(b.rot);
-      ctx.font = `${b.size}px serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText(b.char, 0, 0);
-      ctx.restore();
+      b.y -= b.speed; b.rot += b.rotSpeed;
+      if (b.y < -40) { b.y = canvas.height+40; b.x = Math.random()*canvas.width; }
+      ctx.save(); ctx.globalAlpha = b.opacity; ctx.translate(b.x,b.y); ctx.rotate(b.rot);
+      ctx.font = `${b.size}px serif`; ctx.textAlign = 'center'; ctx.fillText(b.char, 0, 0); ctx.restore();
     });
     requestAnimationFrame(draw);
   }
   draw();
 })();
 
-// ─── Helpers ─────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
 function showError(id, msg) {
   const el = document.getElementById(id);
   el.textContent = msg; el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 4000);
+  setTimeout(() => el.style.display = 'none', 5000);
 }
-
 function showSuccess(id, msg) {
   const el = document.getElementById(id);
   el.textContent = msg; el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 4000);
+  setTimeout(() => el.style.display = 'none', 5000);
 }
-
 async function api(method, path, body) {
   const opts = {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      'credid': session ? session.credId : '',
-      'protectionid': session ? session.protectionId : ''
-    }
+    headers: { 'Content-Type': 'application/json', 'credid': session?.credId||'', 'protectionid': session?.protectionId||'' }
   };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(path, opts);
@@ -685,61 +624,71 @@ async function api(method, path, body) {
   if (!res.ok) throw new Error(data.error || 'Server error');
   return data;
 }
-
-function formatCP(n) {
-  return Number(n).toLocaleString() + ' CP';
-}
-
 function timeAgo(iso) {
-  const d = new Date(iso);
-  const diff = (Date.now() - d) / 1000;
+  const d = new Date(iso), diff = (Date.now()-d)/1000;
   if (diff < 60) return 'just now';
   if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
   return d.toLocaleDateString();
 }
 
-// ─── Login ───────────────────────────────────────────────
+// ─── Login Tab Switch ──────────────────────────────────────
+function switchLoginTab(tab) {
+  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('panel-signin').style.display = tab==='signin' ? '' : 'none';
+  document.getElementById('panel-register').style.display = tab==='register' ? '' : 'none';
+}
+
+// ─── Register ─────────────────────────────────────────────
+async function doRegister() {
+  const firstName = document.getElementById('reg-first').value.trim();
+  const lastName  = document.getElementById('reg-last').value.trim();
+  const credId    = document.getElementById('reg-credid').value.trim();
+  const pid       = document.getElementById('reg-pid').value.trim();
+  const pid2      = document.getElementById('reg-pid2').value.trim();
+  if (!firstName || !lastName) return showError('reg-error', 'Enter your first and last name.');
+  if (!/^\d{8}$/.test(credId)) return showError('reg-error', 'Cred ID must be exactly 8 digits.');
+  if (!/^\d{4,8}$/.test(pid)) return showError('reg-error', 'Protection ID must be 4–8 digits.');
+  if (pid !== pid2) return showError('reg-error', "Protection IDs don't match.");
+  try {
+    await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({firstName, lastName, credId, protectionId: pid}) }).then(async r => {
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      return d;
+    });
+    showSuccess('reg-success', `✅ Account created! Sign in with Cred ID ${credId}.`);
+    ['reg-first','reg-last','reg-credid','reg-pid','reg-pid2'].forEach(id => document.getElementById(id).value = '');
+    setTimeout(() => switchLoginTab('signin'), 2500);
+  } catch(e) { showError('reg-error', e.message); }
+}
+
+// ─── Login ────────────────────────────────────────────────
 async function doLogin() {
   const credId = document.getElementById('login-credid').value.trim();
   const protectionId = document.getElementById('login-pid').value.trim();
-
   if (!/^\d{8}$/.test(credId)) return showError('login-error', 'Cred ID must be 8 digits.');
-  if (!/^\d{4}$/.test(protectionId)) return showError('login-error', 'Protection ID must be 4 digits.');
-
+  if (!/^\d{4,8}$/.test(protectionId)) return showError('login-error', 'Protection ID must be 4–8 digits.');
   try {
-    const data = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credId, protectionId })
-    });
+    const data = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({credId, protectionId}) });
     const res = await data.json();
     if (!data.ok) return showError('login-error', res.error);
-
     session = { ...res.account, protectionId };
     loadApp();
     showScreen('screen-app');
-  } catch(e) {
-    showError('login-error', e.message);
-  }
+  } catch(e) { showError('login-error', e.message); }
 }
 
-document.getElementById('login-pid').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
+document.getElementById('login-credid').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('login-pid').focus(); });
+document.getElementById('login-pid').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
 
-// ─── App ─────────────────────────────────────────────────
+// ─── App ──────────────────────────────────────────────────
 async function loadApp() {
   if (!session) return;
-
   document.getElementById('header-name').textContent = session.firstName + ' ' + session.lastName;
   document.getElementById('header-credid').textContent = 'ID: ' + session.credId;
   document.getElementById('balance-credid').textContent = 'CRED #' + session.credId;
-
-  if (session.isAdmin) {
-    document.getElementById('admin-nav-btn').style.display = '';
-  }
-
+  if (session.isAdmin) document.getElementById('admin-nav-btn').style.display = '';
   await refreshData();
 }
 
@@ -748,7 +697,6 @@ async function refreshData() {
     const me = await api('GET', '/api/me');
     session.balance = me.balance;
     document.getElementById('balance-display').textContent = Number(me.balance).toLocaleString();
-
     const txs = await api('GET', '/api/transactions');
     renderTxList(txs);
   } catch(e) {}
@@ -756,52 +704,70 @@ async function refreshData() {
 
 function renderTxList(txs) {
   const el = document.getElementById('tx-list');
-  if (!txs || txs.length === 0) {
-    el.innerHTML = '<div class="tx-empty">No transactions yet.<br>Send your first gift! 🎁</div>';
-    return;
-  }
-
+  if (!txs || !txs.length) { el.innerHTML = '<div class="tx-empty">No transactions yet.<br>Send your first Poofs! 🧀</div>'; return; }
   el.innerHTML = txs.map(tx => {
     const received = tx.toCredId === session.credId;
-    const icon = received ? '🎁' : '📤';
-    const name = received
-      ? `From: ${tx.fromName === 'Admin (Chase Petrosky)' ? '👑 Admin' : tx.fromName}`
-      : `To: ${tx.toName}`;
-    const amtClass = received ? 'pos' : 'neg';
-    const amtStr = (received ? '+' : '-') + Number(tx.amount).toLocaleString() + ' CP';
-    return `
-      <div class="tx-item ${received ? 'received' : 'sent'}">
-        <div class="tx-icon">${icon}</div>
-        <div class="tx-info">
-          <div class="tx-name">${name}</div>
-          ${tx.message ? `<div class="tx-msg">💬 ${tx.message}</div>` : ''}
-          <div class="tx-date">${timeAgo(tx.createdAt)}</div>
-        </div>
-        <div class="tx-amount ${amtClass}">${amtStr}</div>
-      </div>`;
+    const name = received ? `From: ${tx.fromName.includes('Admin') ? '👑 Admin' : tx.fromName}` : `To: ${tx.toName}`;
+    return `<div class="tx-item ${received?'received':'sent'}">
+      <div class="tx-icon">${received?'🧀':'📤'}</div>
+      <div class="tx-info">
+        <div class="tx-name">${name}</div>
+        ${tx.message ? `<div class="tx-msg">💬 ${tx.message}</div>` : ''}
+        <div class="tx-date">${timeAgo(tx.createdAt)}</div>
+      </div>
+      <div class="tx-amount ${received?'pos':'neg'}">${received?'+':'-'}${Number(tx.amount).toLocaleString()} CP</div>
+    </div>`;
   }).join('');
 }
 
 function doLogout() {
-  session = null;
+  session = null; adminUnlocked = false;
   document.getElementById('login-credid').value = '';
   document.getElementById('login-pid').value = '';
   showScreen('screen-login');
 }
+function goApp() { showScreen('screen-app'); refreshData(); }
+
+// ─── Directory ────────────────────────────────────────────
+async function goDirectory() {
+  showScreen('screen-directory');
+  document.getElementById('dir-search').value = '';
+  document.getElementById('dir-list').innerHTML = '<div class="tx-empty">Loading…</div>';
+  try {
+    dirData = await api('GET', '/api/directory');
+    renderDirectory(dirData);
+  } catch(e) { document.getElementById('dir-list').innerHTML = '<div class="tx-empty">Failed to load.</div>'; }
+}
+
+function renderDirectory(data) {
+  const el = document.getElementById('dir-list');
+  if (!data.length) { el.innerHTML = '<div class="tx-empty">No accounts found.</div>'; return; }
+  el.innerHTML = data.map(a => {
+    const initials = (a.firstName[0]||'?') + (a.lastName[0]||'?');
+    return `<div class="dir-item">
+      <div class="dir-avatar">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div class="dir-name">${a.isAdmin ? '👑 ' : ''}${a.firstName} ${a.lastName} ${a.isAdmin ? '<span class="dir-badge admin-badge">Admin</span>' : ''}</div>
+        <div class="dir-id">Cred ID: ${a.credId} &nbsp;|&nbsp; Joined ${new Date(a.createdAt).toLocaleDateString()}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterDirectory() {
+  const q = document.getElementById('dir-search').value.toLowerCase();
+  if (!q) return renderDirectory(dirData);
+  renderDirectory(dirData.filter(a => `${a.firstName} ${a.lastName} ${a.credId}`.toLowerCase().includes(q)));
+}
 
 // ─── Send Modal ───────────────────────────────────────────
 function openSendModal() {
-  document.getElementById('send-credid').value = '';
-  document.getElementById('send-amount').value = '';
-  document.getElementById('send-msg').value = '';
+  ['send-credid','send-amount','send-msg'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('send-lookup').style.display = 'none';
   document.getElementById('send-error').style.display = 'none';
   document.getElementById('send-modal').classList.add('active');
 }
-
-function closeSendModal() {
-  document.getElementById('send-modal').classList.remove('active');
-}
+function closeSendModal() { document.getElementById('send-modal').classList.remove('active'); }
 
 async function lookupRecipient() {
   clearTimeout(lookupTimer);
@@ -809,14 +775,8 @@ async function lookupRecipient() {
   const el = document.getElementById('send-lookup');
   if (!/^\d{8}$/.test(credId)) { el.style.display = 'none'; return; }
   lookupTimer = setTimeout(async () => {
-    try {
-      const data = await api('GET', '/api/lookup/' + credId);
-      el.textContent = `✅ ${data.firstName} ${data.lastName}`;
-      el.style.display = 'block';
-    } catch(e) {
-      el.textContent = '❌ User not found';
-      el.style.display = 'block';
-    }
+    try { const d = await api('GET', '/api/lookup/'+credId); el.textContent = `✅ ${d.firstName} ${d.lastName}`; el.style.display = 'block'; }
+    catch(e) { el.textContent = '❌ User not found'; el.style.display = 'block'; }
   }, 400);
 }
 
@@ -824,210 +784,300 @@ async function doSend() {
   const toCredId = document.getElementById('send-credid').value.trim();
   const amount = parseInt(document.getElementById('send-amount').value);
   const message = document.getElementById('send-msg').value.trim();
-
   if (!/^\d{8}$/.test(toCredId)) return showError('send-error', 'Enter a valid 8-digit Cred ID.');
   if (!amount || amount <= 0) return showError('send-error', 'Enter a valid amount.');
-
   try {
-    const res = await api('POST', '/api/send', { toCredId, amount, message });
+    const res = await api('POST', '/api/send', {toCredId, amount, message});
     closeSendModal();
     session.balance = res.newBalance;
     document.getElementById('balance-display').textContent = Number(res.newBalance).toLocaleString();
     playGiftSendAnimation();
     setTimeout(() => refreshData(), 2800);
-  } catch(e) {
-    showError('send-error', e.message);
-  }
+  } catch(e) { showError('send-error', e.message); }
 }
 
-// ─── Gift Box Animation ───────────────────────────────────
+document.getElementById('send-modal').addEventListener('click', function(e) { if (e.target===this) closeSendModal(); });
+
+// ─── Gift Animation ───────────────────────────────────────
 function playGiftSendAnimation() {
   const overlay = document.getElementById('gift-overlay');
-  overlay.innerHTML = '';
-  overlay.classList.add('active');
-
-  // Main gift box from bottom center
+  overlay.innerHTML = ''; overlay.classList.add('active');
   const box = document.createElement('div');
-  box.className = 'gift-box';
-  box.textContent = '🎁';
-  box.style.left = (window.innerWidth / 2 - 32) + 'px';
-  box.style.bottom = '80px';
+  box.className = 'gift-box'; box.textContent = '🧀';
+  box.style.left = (window.innerWidth/2-32)+'px'; box.style.bottom = '80px';
   overlay.appendChild(box);
-
-  // Sparkles burst
   const sparkles = ['✨','⭐','💛','🌟','🎊','💫'];
-  for (let i = 0; i < 10; i++) {
-    const s = document.createElement('div');
-    s.className = 'gift-sparkle';
-    s.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-    const angle = (Math.PI * 2 / 10) * i;
-    const dist = 60 + Math.random() * 80;
-    s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
-    s.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
-    s.style.left = (window.innerWidth / 2 - 12) + 'px';
-    s.style.bottom = '120px';
-    s.style.animationDelay = (Math.random() * 0.3) + 's';
+  for (let i=0;i<10;i++) {
+    const s = document.createElement('div'); s.className = 'gift-sparkle';
+    s.textContent = sparkles[Math.floor(Math.random()*sparkles.length)];
+    const angle = (Math.PI*2/10)*i, dist = 60+Math.random()*80;
+    s.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+    s.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+    s.style.left = (window.innerWidth/2-12)+'px'; s.style.bottom = '120px';
+    s.style.animationDelay = (Math.random()*0.3)+'s';
     overlay.appendChild(s);
   }
-
-  // Sky flash
   const flash = document.createElement('div');
-  flash.style.cssText = `position:fixed;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,200,0,0.3),transparent 60%);animation:fadeFlash 2s forwards;pointer-events:none;`;
+  flash.style.cssText = 'position:fixed;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,200,0,0.3),transparent 60%);animation:fadeFlash 2s forwards;pointer-events:none;';
   overlay.appendChild(flash);
-
-  const style = document.createElement('style');
-  style.textContent = '@keyframes fadeFlash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}';
-  document.head.appendChild(style);
-
-  // Success popup
-  setTimeout(() => {
-    const popup = document.createElement('div');
-    popup.className = 'gift-msg-popup';
-    popup.innerHTML = '🎁 Gift sent into the sky! ✨';
-    document.body.appendChild(popup);
-    setTimeout(() => popup.remove(), 2600);
-  }, 400);
-
-  setTimeout(() => {
-    overlay.classList.remove('active');
-    overlay.innerHTML = '';
-  }, 3000);
+  const style = document.createElement('style'); style.textContent = '@keyframes fadeFlash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}'; document.head.appendChild(style);
+  setTimeout(() => { const p = document.createElement('div'); p.className = 'gift-msg-popup'; p.innerHTML = '🧀 Poofs sent! ✨'; document.body.appendChild(p); setTimeout(() => p.remove(), 2600); }, 400);
+  setTimeout(() => { overlay.classList.remove('active'); overlay.innerHTML = ''; }, 3000);
 }
 
-// ─── Admin Panel ──────────────────────────────────────────
+// ─── Admin: Lock / Unlock ─────────────────────────────────
 function goAdmin() {
-  loadAdmin();
   showScreen('screen-admin');
+  if (adminUnlocked) { showAdminContent(); } else { showAdminLock(); }
 }
-
-function goApp() {
-  showScreen('screen-app');
-  refreshData();
+function showAdminLock() {
+  document.getElementById('admin-lock-overlay').style.display = 'flex';
+  document.getElementById('admin-content').style.display = 'none';
+  document.getElementById('admin-code-input').value = '';
+  document.getElementById('admin-code-error').style.display = 'none';
 }
+function showAdminContent() {
+  document.getElementById('admin-lock-overlay').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
+  loadAdminDashboard();
+}
+function lockAdmin() { adminUnlocked = false; showAdminLock(); }
 
+function checkAdminCode() {
+  const code = document.getElementById('admin-code-input').value.trim();
+  if (code === '102113') {
+    adminUnlocked = true;
+    showAdminContent();
+  } else {
+    showError('admin-code-error', '❌ Incorrect code. Try again.');
+    document.getElementById('admin-code-input').value = '';
+  }
+}
+document.getElementById('admin-code-input').addEventListener('keydown', e => { if (e.key==='Enter') checkAdminCode(); });
+
+// ─── Admin Tabs ───────────────────────────────────────────
+const ADMIN_TABS = ['dashboard','accounts','give','bulk','create','stock','txlog','danger'];
 function adminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', ADMIN_TABS[i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-  const tabs = ['accounts','give','create','txlog'];
-  const idx = tabs.indexOf(tab);
-  document.querySelectorAll('.admin-tab')[idx].classList.add('active');
-  document.getElementById('apanel-' + tab).classList.add('active');
-
-  if (tab === 'accounts') loadAdminAccounts();
-  if (tab === 'txlog') loadAdminTxLog();
+  document.getElementById('apanel-'+tab).classList.add('active');
+  if (tab==='dashboard') loadAdminDashboard();
+  if (tab==='accounts') loadAdminAccounts();
+  if (tab==='txlog') loadAdminTxLog();
+  if (tab==='stock') loadAdminStock();
 }
 
-async function loadAdmin() {
-  loadAdminAccounts();
+// ─── Dashboard ────────────────────────────────────────────
+async function loadAdminDashboard() {
+  try {
+    const s = await api('GET', '/api/admin/stats');
+    const circPct = s.cpStock > 0 ? Math.min(100, (s.totalCP / s.cpStock * 100)).toFixed(1) : 0;
+    document.getElementById('admin-stats-grid').innerHTML = `
+      <div class="stat-box"><div class="sv">${s.totalAccounts}</div><div class="sl">Total Accounts</div></div>
+      <div class="stat-box"><div class="sv">${Number(s.totalCP).toLocaleString()}</div><div class="sl">CP In Circulation</div></div>
+      <div class="stat-box"><div class="sv">${Number(s.cpStock).toLocaleString()}</div><div class="sl">CP Stock Total</div></div>
+      <div class="stat-box"><div class="sv">${circPct}%</div><div class="sl">Stock In Use</div></div>
+      <div class="stat-box"><div class="sv">${s.totalTransactions}</div><div class="sl">All-Time TXs</div></div>
+      <div class="stat-box"><div class="sv">${s.todayTransactions}</div><div class="sl">TXs Today</div></div>
+      <div class="stat-box"><div class="sv">${Number(s.totalVolume).toLocaleString()}</div><div class="sl">Total Volume</div></div>
+      <div class="stat-box"><div class="sv">${Number(s.totalAdminGranted).toLocaleString()}</div><div class="sl">Admin Granted</div></div>
+      ${s.richest ? `<div class="stat-box" style="grid-column:span 2"><div class="sv" style="font-size:1rem">🏆 ${s.richest.name}</div><div class="sl">Richest — ${Number(s.richest.balance).toLocaleString()} CP</div></div>` : ''}
+      ${s.newest ? `<div class="stat-box" style="grid-column:span 2"><div class="sv" style="font-size:1rem">🆕 ${s.newest.name}</div><div class="sl">Newest Account</div></div>` : ''}
+    `;
+  } catch(e) { document.getElementById('admin-stats-grid').innerHTML = '<div class="tx-empty">Failed to load stats.</div>'; }
 }
 
+// ─── Accounts List ────────────────────────────────────────
 async function loadAdminAccounts() {
   try {
     const accounts = await api('GET', '/api/admin/accounts');
-    const totalCP = accounts.reduce((s, a) => s + a.balance, 0);
+    renderAdminAccounts(accounts);
+  } catch(e) {}
+}
 
-    document.getElementById('admin-stats').innerHTML = `
-      <div class="stat-box"><div class="sv">${accounts.length}</div><div class="sl">Total Accounts</div></div>
-      <div class="stat-box"><div class="sv">${Number(totalCP).toLocaleString()}</div><div class="sl">Total CP in Circulation</div></div>
-    `;
-
-    document.getElementById('admin-accounts-list').innerHTML = accounts.map(a => `
-      <div class="account-row">
-        <div>
-          <div class="ar-name">${a.isAdmin ? '👑 ' : ''}${a.firstName} ${a.lastName}</div>
-          <div class="ar-id">Cred: ${a.credId} &nbsp;|&nbsp; Joined: ${new Date(a.createdAt).toLocaleDateString()}</div>
-        </div>
-        <div class="ar-bal">${Number(a.balance).toLocaleString()} CP</div>
-        ${!a.isAdmin ? `<button class="btn btn-red btn-sm" onclick="adminDelete('${a.credId}','${a.firstName} ${a.lastName}')">🗑</button>` : ''}
+function renderAdminAccounts(accounts) {
+  document.getElementById('admin-accounts-list').innerHTML = accounts.map(a => `
+    <div class="account-row">
+      <div class="ar-info">
+        <div class="ar-name">${a.isAdmin?'👑 ':''}${a.firstName} ${a.lastName}</div>
+        <div class="ar-id">Cred: ${a.credId} &nbsp;|&nbsp; Joined: ${new Date(a.createdAt).toLocaleDateString()}</div>
+        ${a.notes ? `<div class="ar-id" style="color:#aa7700">📝 ${a.notes}</div>` : ''}
       </div>
-    `).join('');
+      <div class="ar-bal">${Number(a.balance).toLocaleString()} CP</div>
+      <div class="ar-actions">
+        <button class="btn btn-blue btn-xs" onclick="openEditModal('${a.credId}','${a.firstName}','${a.lastName}','${(a.notes||'').replace(/'/g,"\\'")}')">✏️</button>
+        ${!a.isAdmin ? `<button class="btn btn-red btn-xs" onclick="adminDelete('${a.credId}','${a.firstName} ${a.lastName}')">🗑</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function adminSearchAccounts() {
+  const q = document.getElementById('admin-search').value.trim();
+  if (!q) return loadAdminAccounts();
+  try {
+    const results = await api('GET', '/api/admin/search?q='+encodeURIComponent(q));
+    renderAdminAccounts(results);
   } catch(e) {}
 }
 
 async function adminDelete(credId, name) {
   if (!confirm(`Delete account for ${name} (${credId})? This cannot be undone.`)) return;
-  try {
-    await api('DELETE', '/api/admin/delete-account/' + credId);
-    loadAdminAccounts();
-  } catch(e) { alert(e.message); }
+  try { await api('DELETE', '/api/admin/delete-account/'+credId); loadAdminAccounts(); }
+  catch(e) { alert(e.message); }
 }
 
-async function loadAdminTxLog() {
-  try {
-    const txs = await api('GET', '/api/admin/transactions');
-    const el = document.getElementById('admin-tx-list');
-    if (!txs.length) { el.innerHTML = '<div class="tx-empty">No transactions yet.</div>'; return; }
-    el.innerHTML = txs.map(tx => `
-      <div class="tx-item received" style="border-left-color:#8e44ad">
-        <div class="tx-icon">💸</div>
-        <div class="tx-info">
-          <div class="tx-name">${tx.fromName} → ${tx.toName}</div>
-          ${tx.message ? `<div class="tx-msg">💬 ${tx.message}</div>` : ''}
-          <div class="tx-date">${timeAgo(tx.createdAt)}</div>
-        </div>
-        <div class="tx-amount pos">+${Number(tx.amount).toLocaleString()} CP</div>
-      </div>
-    `).join('');
-  } catch(e) {}
+// ─── Edit Account Modal ───────────────────────────────────
+function openEditModal(credId, firstName, lastName, notes) {
+  document.getElementById('edit-credid').value = credId;
+  document.getElementById('edit-first').value = firstName;
+  document.getElementById('edit-last').value = lastName;
+  document.getElementById('edit-pid').value = '';
+  document.getElementById('edit-notes').value = notes;
+  document.getElementById('edit-error').style.display = 'none';
+  document.getElementById('edit-success').style.display = 'none';
+  document.getElementById('edit-modal').classList.add('active');
 }
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('active'); }
+document.getElementById('edit-modal').addEventListener('click', function(e) { if (e.target===this) closeEditModal(); });
+
+async function adminSaveEdit() {
+  const credId = document.getElementById('edit-credid').value;
+  const firstName = document.getElementById('edit-first').value.trim();
+  const lastName = document.getElementById('edit-last').value.trim();
+  const protectionId = document.getElementById('edit-pid').value.trim();
+  const notes = document.getElementById('edit-notes').value.trim();
+  if (protectionId && !/^\d{4,8}$/.test(protectionId)) return showError('edit-error', 'Protection ID must be 4–8 digits.');
+  try {
+    await api('POST', '/api/admin/edit-account', {credId, firstName, lastName, protectionId, notes});
+    showSuccess('edit-success', '✅ Saved!');
+    setTimeout(() => { closeEditModal(); loadAdminAccounts(); }, 1500);
+  } catch(e) { showError('edit-error', e.message); }
+}
+
+// ─── Give / Reset ─────────────────────────────────────────
+document.getElementById('give-credid').addEventListener('input', async function() {
+  const credId = this.value.trim(); const el = document.getElementById('give-lookup');
+  if (!/^\d{8}$/.test(credId)) { el.style.display='none'; return; }
+  try { const d = await api('GET','/api/lookup/'+credId); el.textContent=`✅ ${d.firstName} ${d.lastName}`; el.style.display='block'; }
+  catch(e) { el.textContent='❌ User not found'; el.style.display='block'; }
+});
+document.getElementById('reset-credid').addEventListener('input', async function() {
+  const credId = this.value.trim(); const el = document.getElementById('reset-lookup');
+  if (!/^\d{8}$/.test(credId)) { el.style.display='none'; return; }
+  try { const d = await api('GET','/api/lookup/'+credId); el.textContent=`✅ ${d.firstName} ${d.lastName}`; el.style.display='block'; }
+  catch(e) { el.textContent='❌ User not found'; el.style.display='block'; }
+});
 
 async function adminGive() {
   const credId = document.getElementById('give-credid').value.trim();
   const amount = parseFloat(document.getElementById('give-amount').value);
+  const reason = document.getElementById('give-reason').value.trim();
   if (!/^\d{8}$/.test(credId)) return showError('give-error', 'Enter a valid 8-digit Cred ID.');
-  if (isNaN(amount) || amount === 0) return showError('give-error', 'Enter a non-zero amount.');
+  if (isNaN(amount) || amount===0) return showError('give-error', 'Enter a non-zero amount.');
   try {
-    const res = await api('POST', '/api/admin/give-money', { credId, amount });
+    const res = await api('POST', '/api/admin/give-money', {credId, amount, reason});
     showSuccess('give-success', `✅ Done! New balance: ${Number(res.newBalance).toLocaleString()} CP`);
-    document.getElementById('give-credid').value = '';
-    document.getElementById('give-amount').value = '';
-    document.getElementById('give-lookup').style.display = 'none';
+    document.getElementById('give-credid').value=''; document.getElementById('give-amount').value=''; document.getElementById('give-reason').value='';
+    document.getElementById('give-lookup').style.display='none';
   } catch(e) { showError('give-error', e.message); }
 }
 
-// Lookup in give panel
-document.getElementById('give-credid').addEventListener('input', async function() {
-  const credId = this.value.trim();
-  const el = document.getElementById('give-lookup');
-  if (!/^\d{8}$/.test(credId)) { el.style.display = 'none'; return; }
+async function adminReset() {
+  const credId = document.getElementById('reset-credid').value.trim();
+  if (!/^\d{8}$/.test(credId)) return showError('reset-error', 'Enter a valid 8-digit Cred ID.');
+  if (!confirm(`Reset balance to 0 for ${credId}?`)) return;
   try {
-    const data = await api('GET', '/api/lookup/' + credId);
-    el.textContent = `✅ ${data.firstName} ${data.lastName}`;
-    el.style.display = 'block';
-  } catch(e) {
-    el.textContent = '❌ User not found';
-    el.style.display = 'block';
-  }
-});
+    await api('POST', '/api/admin/reset-balance', {credId});
+    showSuccess('reset-success', '✅ Balance reset to 0 CP.');
+    document.getElementById('reset-credid').value=''; document.getElementById('reset-lookup').style.display='none';
+  } catch(e) { showError('reset-error', e.message); }
+}
 
+// ─── Bulk Give ────────────────────────────────────────────
+async function adminBulkGive() {
+  const amount = parseFloat(document.getElementById('bulk-amount').value);
+  const reason = document.getElementById('bulk-reason').value.trim();
+  if (isNaN(amount)||amount===0) return showError('bulk-error', 'Enter a non-zero amount.');
+  if (!confirm(`Give ${amount>0?'+':''}${amount} CP to ALL non-admin accounts?`)) return;
+  try {
+    const res = await api('POST', '/api/admin/bulk-give', {amount, reason});
+    showSuccess('bulk-success', `✅ Done! Affected ${res.affected} accounts.`);
+    document.getElementById('bulk-amount').value=''; document.getElementById('bulk-reason').value='';
+  } catch(e) { showError('bulk-error', e.message); }
+}
+
+// ─── Create Account ───────────────────────────────────────
 async function adminCreate() {
   const firstName = document.getElementById('new-first').value.trim();
   const lastName = document.getElementById('new-last').value.trim();
   const credId = document.getElementById('new-credid').value.trim();
   const protectionId = document.getElementById('new-pid').value.trim();
-  const startingBalance = parseFloat(document.getElementById('new-balance').value) || 0;
-
-  if (!firstName || !lastName) return showError('create-error', 'Enter first and last name.');
-  if (!/^\d{8}$/.test(credId)) return showError('create-error', 'Cred ID must be exactly 8 digits.');
-  if (!/^\d{4}$/.test(protectionId)) return showError('create-error', 'Protection ID must be exactly 4 digits.');
-
+  const startingBalance = parseFloat(document.getElementById('new-balance').value)||0;
+  const isAdmin = document.getElementById('new-isadmin').value === 'true';
+  if (!firstName||!lastName) return showError('create-error','Enter first and last name.');
+  if (!/^\d{8}$/.test(credId)) return showError('create-error','Cred ID must be 8 digits.');
+  if (!/^\d{4,8}$/.test(protectionId)) return showError('create-error','Protection ID must be 4–8 digits.');
   try {
-    await api('POST', '/api/admin/create-account', { firstName, lastName, credId, protectionId, startingBalance });
-    showSuccess('create-success', `✅ Account created for ${firstName} ${lastName}!`);
-    ['new-first','new-last','new-credid','new-pid'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('new-balance').value = '0';
-  } catch(e) { showError('create-error', e.message); }
+    await api('POST','/api/admin/create-account',{firstName,lastName,credId,protectionId,startingBalance,isAdmin});
+    showSuccess('create-success',`✅ Account created for ${firstName} ${lastName}!`);
+    ['new-first','new-last','new-credid','new-pid'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('new-balance').value='0';
+    document.getElementById('new-isadmin').value='false';
+  } catch(e) { showError('create-error',e.message); }
 }
 
-// Close modal on overlay click
-document.getElementById('send-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeSendModal();
-});
+// ─── CP Stock ─────────────────────────────────────────────
+async function loadAdminStock() {
+  try {
+    const s = await api('GET','/api/admin/stats');
+    document.getElementById('stock-number').textContent = Number(s.cpStock).toLocaleString();
+    document.getElementById('new-stock').value = s.cpStock;
+    const pct = s.cpStock > 0 ? Math.min(100, s.totalCP / s.cpStock * 100) : 0;
+    document.getElementById('stock-bar').style.width = pct + '%';
+    document.getElementById('stock-bar-pct').textContent = pct.toFixed(1) + '% in use';
+    document.getElementById('stock-max-label').textContent = Number(s.cpStock).toLocaleString();
+  } catch(e) {}
+}
+async function adminSetStock() {
+  const stock = parseFloat(document.getElementById('new-stock').value);
+  if (isNaN(stock)||stock<0) return showError('stock-error','Enter a valid stock amount.');
+  try {
+    await api('POST','/api/admin/set-stock',{stock});
+    showSuccess('stock-success',`✅ Stock updated to ${Number(stock).toLocaleString()} CP.`);
+    loadAdminStock();
+  } catch(e) { showError('stock-error',e.message); }
+}
 
-// Enter key on login credid
-document.getElementById('login-credid').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('login-pid').focus();
-});
+// ─── TX Log ───────────────────────────────────────────────
+async function loadAdminTxLog() {
+  try {
+    const txs = await api('GET','/api/admin/transactions');
+    const el = document.getElementById('admin-tx-list');
+    if (!txs.length) { el.innerHTML='<div class="tx-empty">No transactions yet.</div>'; return; }
+    el.innerHTML = txs.map(tx=>`
+      <div class="tx-item received" style="border-left-color:#8e44ad">
+        <div class="tx-icon">💸</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.fromName} → ${tx.toName}</div>
+          ${tx.message?`<div class="tx-msg">💬 ${tx.message}</div>`:''}
+          <div class="tx-date">${timeAgo(tx.createdAt)}</div>
+        </div>
+        <div class="tx-amount pos">+${Number(tx.amount).toLocaleString()} CP</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+// ─── Danger Zone ──────────────────────────────────────────
+async function adminClearTx() {
+  if (!confirm('Delete ALL transaction history? This cannot be undone.')) return;
+  if (!confirm('Are you really sure? This is permanent.')) return;
+  try {
+    await api('DELETE','/api/admin/clear-transactions');
+    alert('Transaction history cleared.');
+    loadAdminTxLog();
+  } catch(e) { alert(e.message); }
+}
 </script>
 </body>
 </html>
