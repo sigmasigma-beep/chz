@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧀 Cheezy Poof Currency</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF8C00;
+    --yellow: #FFD700;
+    --cheese: #FFA500;
+    --dark: #1a0800;
+    --card: #fffbe8;
+    --accent: #e65c00;
+    --sky: #4fc3f7;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --purple: #8e44ad;
+    --bg1: #1a0800;
+    --bg2: #2d1200;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: radial-gradient(ellipse at top, #2d1500 0%, #0d0500 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #222;
+  }
+
+  /* Floating cheese bg */
+  #bg-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Layout ─────────────────── */
+  .screen {
+    display: none; position: relative; z-index: 1;
+    min-height: 100vh; padding: 1rem;
+  }
+  .screen.active { display: block; }
+
+  /* ── Login Screen ───────────── */
+  #screen-login {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .logo-wrap { text-align: center; margin-bottom: 2rem; }
+  .logo-main {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    background: linear-gradient(135deg, #FFD700, #FF8C00, #FFD700);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 4px 12px rgba(255,140,0,0.5));
+    line-height: 1;
+  }
+  .logo-sub {
+    font-size: 1rem; color: #FFD700; opacity: 0.8;
+    letter-spacing: 3px; text-transform: uppercase; margin-top: 0.3rem;
+  }
+  .logo-emoji { font-size: 3rem; margin-bottom: 0.5rem; display: block; }
+
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,200,0,0.3);
+    width: 100%; max-width: 420px;
+  }
+
+  .card h2 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--accent); font-size: 1.6rem; margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  label {
+    display: block; font-weight: 700; color: #555;
+    font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 0.4rem; margin-top: 1rem;
+  }
+
+  input {
+    width: 100%; padding: 0.85rem 1rem;
+    border: 2px solid #e0d0a0;
+    border-radius: 12px; font-size: 1rem;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    background: #fff; color: var(--dark);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgba(255,140,0,0.15);
+  }
+  input[type="password"] { letter-spacing: 4px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.9rem 1.8rem; border: none; border-radius: 14px;
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; transition: all 0.18s; text-decoration: none;
+    width: 100%; margin-top: 1.5rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), var(--accent));
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(230,92,0,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(230,92,0,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: #fff3d0; color: var(--accent);
+    border: 2px solid var(--cheese); margin-top: 0.75rem;
+  }
+  .btn-secondary:hover { background: #ffe9a0; }
+
+  .btn-green { background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff;
+    box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+  .btn-red { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff;
+    box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
+  .btn-purple { background: linear-gradient(135deg, #8e44ad, #6c3483); color: #fff;
+    box-shadow: 0 6px 20px rgba(142,68,173,0.4); }
+  .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; width: auto; margin-top: 0; border-radius: 10px; }
+
+  .error-msg {
+    background: #fde8e8; color: var(--red);
+    border: 2px solid #f5c6c6; border-radius: 10px;
+    padding: 0.7rem 1rem; margin-top: 1rem;
+    font-weight: 700; font-size: 0.9rem; display: none;
+  }
+  .success-msg {
+    background: #e8fde8; color: var(--green);
+    border: 2px solid #c6f5c6; border-radius: 10px;
+    padding: 0.7rem 1rem; margin-top: 1rem;
+    font-weight: 700; font-size: 0.9rem; display: none;
+  }
+
+  /* ── Main App ───────────────── */
+  #screen-app { padding: 0; }
+
+  .app-header {
+    background: linear-gradient(135deg, #1a0800, #2d1200);
+    border-bottom: 3px solid var(--orange);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .app-logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-user {
+    text-align: right; color: #FFD700;
+    font-size: 0.8rem; font-weight: 700;
+    line-height: 1.3;
+  }
+  .header-user span { display: block; color: #fff; font-size: 0.95rem; }
+
+  /* Balance card */
+  .balance-section {
+    background: linear-gradient(135deg, var(--orange), var(--accent));
+    margin: 1.5rem; border-radius: 24px;
+    padding: 2rem; text-align: center;
+    box-shadow: 0 10px 40px rgba(230,92,0,0.4);
+    position: relative; overflow: hidden;
+  }
+  .balance-section::before {
+    content: '🧀'; position: absolute; font-size: 8rem;
+    right: -1.5rem; top: -1rem; opacity: 0.15;
+  }
+  .balance-label {
+    color: rgba(255,255,255,0.8); font-size: 0.85rem;
+    letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+  }
+  .balance-amount {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    color: #fff; line-height: 1.1; margin: 0.3rem 0;
+  }
+  .balance-unit { color: rgba(255,255,255,0.75); font-size: 0.9rem; font-weight: 700; }
+  .cred-badge {
+    display: inline-block; background: rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 0.3rem 1rem;
+    color: #fff; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 2px; margin-top: 0.8rem;
+  }
+
+  /* Action buttons row */
+  .action-row {
+    display: flex; gap: 1rem; padding: 0 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .action-btn {
+    flex: 1; background: var(--card);
+    border-radius: 18px; padding: 1.2rem 0.5rem;
+    text-align: center; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transition: all 0.18s; border: 2px solid transparent;
+  }
+  .action-btn:hover { transform: translateY(-3px); border-color: var(--orange); }
+  .action-btn .ab-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+  .action-btn .ab-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem; color: var(--accent);
+  }
+
+  /* Transactions */
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem; color: #FFD700;
+    padding: 0 1.5rem; margin-bottom: 1rem;
+  }
+
+  .tx-list { padding: 0 1.5rem 2rem; }
+  .tx-item {
+    background: var(--card); border-radius: 16px;
+    padding: 1rem 1.2rem; margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-left: 5px solid transparent;
+  }
+  .tx-item.received { border-left-color: var(--green); }
+  .tx-item.sent { border-left-color: var(--red); }
+  .tx-icon { font-size: 1.8rem; }
+  .tx-info { flex: 1; min-width: 0; }
+  .tx-name { font-weight: 800; font-size: 0.95rem; color: var(--dark); }
+  .tx-msg { font-size: 0.8rem; color: #888; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-date { font-size: 0.75rem; color: #aaa; }
+  .tx-amount {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    white-space: nowrap;
+  }
+  .tx-amount.pos { color: var(--green); }
+  .tx-amount.neg { color: var(--red); }
+  .tx-empty { text-align: center; color: #ccc; padding: 2rem; font-weight: 700; }
+
+  /* ── Modal / Panel ──────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 500;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--card); border-radius: 24px;
+    padding: 2rem; width: 100%; max-width: 440px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    position: relative; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--accent); font-size: 1.5rem;
+    margin-bottom: 1.5rem; text-align: center;
+  }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: #f0e0c0; border: none; border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--accent); font-weight: 900;
+  }
+  .modal-close:hover { background: var(--orange); color: #fff; }
+
+  .lookup-result {
+    background: #fff3d0; border: 2px solid var(--cheese);
+    border-radius: 12px; padding: 0.8rem 1rem;
+    margin-top: 0.5rem; font-weight: 700; color: var(--dark);
+    display: none;
+  }
+
+  /* ── Gift Box Animation ─────── */
+  #gift-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    pointer-events: none;
+  }
+  #gift-overlay.active { display: block; }
+
+  .gift-box {
+    position: absolute; font-size: 4rem;
+    animation: giftFly 2.5s ease-in forwards;
+    filter: drop-shadow(0 8px 20px rgba(255,200,0,0.8));
+  }
+  @keyframes giftFly {
+    0%   { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+    30%  { transform: scale(1.3) translateY(-80px) rotate(-10deg); opacity: 1; }
+    60%  { transform: scale(0.9) translateY(-250px) rotate(15deg); opacity: 0.9; }
+    100% { transform: scale(0.2) translateY(-700px) rotate(30deg); opacity: 0; }
+  }
+
+  .gift-sparkle {
+    position: absolute; font-size: 1.5rem;
+    animation: sparklePop 1.2s ease-out forwards;
+  }
+  @keyframes sparklePop {
+    0%   { transform: scale(0) translate(0,0); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: scale(1.5) translate(var(--dx), var(--dy)); opacity: 0; }
+  }
+
+  .gift-receive-anim {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem; z-index: 1001;
+    animation: giftDrop 2s ease-out forwards;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 30px rgba(255,200,0,0.9));
+  }
+  @keyframes giftDrop {
+    0%   { transform: translate(-50%, calc(-50% - 300px)) scale(0.3); opacity: 0; }
+    40%  { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    60%  { transform: translate(-50%, -50%) scale(0.95); }
+    80%  { transform: translate(-50%, -50%) scale(1.1); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+
+  .gift-msg-popup {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, 40px);
+    background: linear-gradient(135deg, var(--orange), var(--accent));
+    color: #fff; border-radius: 20px; padding: 1rem 2rem;
+    font-family: 'Fredoka One', cursive; font-size: 1.4rem;
+    z-index: 1002; pointer-events: none;
+    box-shadow: 0 10px 40px rgba(230,92,0,0.6);
+    animation: popIn 2.5s ease forwards;
+    text-align: center; white-space: nowrap;
+  }
+  @keyframes popIn {
+    0%   { opacity: 0; transform: translate(-50%, 40px) scale(0.7); }
+    20%  { opacity: 1; transform: translate(-50%, 0px) scale(1.05); }
+    80%  { opacity: 1; transform: translate(-50%, 0px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -20px) scale(0.9); }
+  }
+
+  /* ── Admin Panel ────────────── */
+  #screen-admin { padding: 0; }
+
+  .admin-header {
+    background: linear-gradient(135deg, #1a0020, #2d0040);
+    border-bottom: 3px solid var(--purple);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .admin-header h1 {
+    font-family: 'Fredoka One', cursive;
+    background: linear-gradient(135deg, #da8fff, #9b59b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; font-size: 1.5rem; flex: 1;
+  }
+
+  .admin-tabs {
+    display: flex; gap: 0.5rem; padding: 1rem 1.5rem;
+    overflow-x: auto;
+  }
+  .admin-tab {
+    padding: 0.5rem 1.2rem; border-radius: 20px;
+    background: rgba(255,255,255,0.1); color: #ccc;
+    border: 2px solid transparent; cursor: pointer;
+    font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+    white-space: nowrap; transition: all 0.18s;
+  }
+  .admin-tab.active, .admin-tab:hover {
+    background: var(--purple); color: #fff;
+    border-color: #da8fff;
+  }
+
+  .admin-panel { padding: 0 1.5rem 2rem; display: none; }
+  .admin-panel.active { display: block; }
+
+  .admin-card {
+    background: var(--card); border-radius: 20px;
+    padding: 1.5rem; margin-bottom: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .admin-card h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple); font-size: 1.2rem; margin-bottom: 1rem;
+  }
+
+  .account-row {
+    background: #f8f0ff; border-radius: 14px;
+    padding: 0.9rem 1.1rem; margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-left: 4px solid var(--purple);
+  }
+  .account-row .ar-name { font-weight: 800; flex: 1; }
+  .account-row .ar-id { font-size: 0.8rem; color: #888; }
+  .account-row .ar-bal {
+    font-family: 'Fredoka One', cursive;
+    color: var(--green); font-size: 1.1rem;
+  }
+
+  /* Nav bottom */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #1a0800; border-top: 2px solid var(--orange);
+    display: flex; z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+  }
+  .nav-btn {
+    flex: 1; padding: 0.8rem 0.5rem;
+    text-align: center; cursor: pointer;
+    color: #664400; transition: all 0.18s;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .nav-btn:hover, .nav-btn.active { color: var(--yellow); }
+  .nav-btn .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 0.2rem; }
+
+  /* Tabs within app */
+  .app-content { padding-bottom: 80px; }
+
+  /* Stats badge */
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.75rem; margin-bottom: 1.5rem;
+  }
+  .stat-box {
+    background: var(--card); border-radius: 16px;
+    padding: 1rem; text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .stat-box .sv { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: var(--accent); }
+  .stat-box .sl { font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .card { padding: 1.5rem; }
+    .balance-section { margin: 1rem; padding: 1.5rem; }
+    .action-row { padding: 0 1rem; }
+    .tx-list { padding: 0 1rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="logo-wrap">
+    <span class="logo-emoji">🧀</span>
+    <div class="logo-main">Cheezy Poof</div>
+    <div class="logo-sub">Digital Currency</div>
+  </div>
+  <div class="card">
+    <h2>Sign In</h2>
+    <label>Cred ID (8 digits)</label>
+    <input type="text" id="login-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+    <label>Protection ID (4 digits)</label>
+    <input type="password" id="login-pid" maxlength="4" placeholder="••••" inputmode="numeric">
+    <div class="error-msg" id="login-error"></div>
+    <button class="btn btn-primary" onclick="doLogin()">🧀 Sign In</button>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN APP ══════════════ -->
+<div class="screen" id="screen-app">
+  <div class="app-header">
+    <div class="app-logo">🧀 Cheezy Poof</div>
+    <div class="header-user">
+      Welcome back,<span id="header-name">–</span>
+      <span id="header-credid" style="font-size:0.72rem;color:#ffaa44"></span>
+    </div>
+  </div>
+
+  <div class="app-content">
+    <!-- Balance -->
+    <div class="balance-section">
+      <div class="balance-label">Your Balance</div>
+      <div class="balance-amount" id="balance-display">0</div>
+      <div class="balance-unit">Cheezy Poofs (CP)</div>
+      <div class="cred-badge" id="balance-credid">CRED #––––––––</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <div class="action-btn" onclick="openSendModal()">
+        <span class="ab-icon">🎁</span>
+        <span class="ab-label">Send Gift</span>
+      </div>
+      <div class="action-btn" onclick="refreshData()">
+        <span class="ab-icon">🔄</span>
+        <span class="ab-label">Refresh</span>
+      </div>
+      <div class="action-btn" id="admin-nav-btn" style="display:none" onclick="goAdmin()">
+        <span class="ab-icon">🔐</span>
+        <span class="ab-label">Admin</span>
+      </div>
+      <div class="action-btn" onclick="doLogout()">
+        <span class="ab-icon">🚪</span>
+        <span class="ab-label">Sign Out</span>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="section-title">📜 Recent Transactions</div>
+    <div class="tx-list" id="tx-list">
+      <div class="tx-empty">No transactions yet.<br>Send your first gift! 🎁</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ADMIN ══════════════ -->
+<div class="screen" id="screen-admin">
+  <div class="admin-header">
+    <button class="btn btn-secondary btn-sm" onclick="goApp()" style="width:auto;margin-top:0">← Back</button>
+    <h1>🔐 Admin Panel</h1>
+  </div>
+
+  <div class="admin-tabs">
+    <div class="admin-tab active" onclick="adminTab('accounts')">👥 Accounts</div>
+    <div class="admin-tab" onclick="adminTab('give')">💰 Give Money</div>
+    <div class="admin-tab" onclick="adminTab('create')">➕ New Account</div>
+    <div class="admin-tab" onclick="adminTab('txlog')">📋 TX Log</div>
+  </div>
+
+  <!-- Accounts tab -->
+  <div class="admin-panel active" id="apanel-accounts">
+    <div class="stat-grid" id="admin-stats"></div>
+    <div id="admin-accounts-list"></div>
+  </div>
+
+  <!-- Give money tab -->
+  <div class="admin-panel" id="apanel-give">
+    <div class="admin-card">
+      <h3>💰 Give / Remove Money</h3>
+      <label>Recipient Cred ID</label>
+      <input type="text" id="give-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+      <div class="lookup-result" id="give-lookup"></div>
+      <label>Amount (use negative to remove)</label>
+      <input type="number" id="give-amount" placeholder="e.g. 500 or -100">
+      <div class="error-msg" id="give-error"></div>
+      <div class="success-msg" id="give-success"></div>
+      <button class="btn btn-green" onclick="adminGive()">💸 Apply</button>
+    </div>
+  </div>
+
+  <!-- Create account tab -->
+  <div class="admin-panel" id="apanel-create">
+    <div class="admin-card">
+      <h3>➕ Create New Account</h3>
+      <label>First Name</label>
+      <input type="text" id="new-first" placeholder="John">
+      <label>Last Name</label>
+      <input type="text" id="new-last" placeholder="Smith">
+      <label>Cred ID (8 digits)</label>
+      <input type="text" id="new-credid" maxlength="8" placeholder="12345678" inputmode="numeric">
+      <label>Protection ID (4 digits)</label>
+      <input type="text" id="new-pid" maxlength="4" placeholder="1234" inputmode="numeric">
+      <label>Starting Balance</label>
+      <input type="number" id="new-balance" placeholder="0" value="0">
+      <div class="error-msg" id="create-error"></div>
+      <div class="success-msg" id="create-success"></div>
+      <button class="btn btn-purple" onclick="adminCreate()">✨ Create Account</button>
+    </div>
+  </div>
+
+  <!-- TX log tab -->
+  <div class="admin-panel" id="apanel-txlog">
+    <div id="admin-tx-list"></div>
+  </div>
+</div>
+
+<!-- ══════════════ SEND MODAL ══════════════ -->
+<div class="modal-overlay" id="send-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSendModal()">✕</button>
+    <h2>🎁 Send a Gift Box</h2>
+    <label>Recipient Cred ID</label>
+    <input type="text" id="send-credid" maxlength="8" placeholder="12345678" inputmode="numeric" oninput="lookupRecipient()">
+    <div class="lookup-result" id="send-lookup"></div>
+    <label>Amount (Cheezy Poofs)</label>
+    <input type="number" id="send-amount" placeholder="e.g. 100" min="1">
+    <label>Message (optional)</label>
+    <input type="text" id="send-msg" placeholder="Happy Birthday! 🎉" maxlength="60">
+    <div class="error-msg" id="send-error"></div>
+    <button class="btn btn-primary" onclick="doSend()">🎁 Launch Gift Box!</button>
+    <button class="btn btn-secondary" onclick="closeSendModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════ GIFT ANIMATIONS ══════════════ -->
+<div id="gift-overlay"></div>
+
+<script>
+// ─── State ──────────────────────────────────────────────
+let session = null; // { credId, protectionId, firstName, lastName, balance, isAdmin }
+let lookupTimer = null;
+
+// ─── Animated cheese background ─────────────────────────
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  const bits = [];
+  const chars = ['🧀','✨','🌟','💛','⭐'];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 18; i++) {
+    bits.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      speed: 0.3 + Math.random() * 0.5,
+      char: chars[Math.floor(Math.random() * chars.length)],
+      size: 16 + Math.random() * 20,
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.02,
+      opacity: 0.04 + Math.random() * 0.06
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bits.forEach(b => {
+      b.y -= b.speed;
+      b.rot += b.rotSpeed;
+      if (b.y < -40) { b.y = canvas.height + 40; b.x = Math.random() * canvas.width; }
+      ctx.save();
+      ctx.globalAlpha = b.opacity;
+      ctx.translate(b.x, b.y);
+      ctx.rotate(b.rot);
+      ctx.font = `${b.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(b.char, 0, 0);
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── Helpers ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+function showSuccess(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'credid': session ? session.credId : '',
+      'protectionid': session ? session.protectionId : ''
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Server error');
+  return data;
+}
+
+function formatCP(n) {
+  return Number(n).toLocaleString() + ' CP';
+}
+
+function timeAgo(iso) {
+  const d = new Date(iso);
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return d.toLocaleDateString();
+}
+
+// ─── Login ───────────────────────────────────────────────
+async function doLogin() {
+  const credId = document.getElementById('login-credid').value.trim();
+  const protectionId = document.getElementById('login-pid').value.trim();
+
+  if (!/^\d{8}$/.test(credId)) return showError('login-error', 'Cred ID must be 8 digits.');
+  if (!/^\d{4}$/.test(protectionId)) return showError('login-error', 'Protection ID must be 4 digits.');
+
+  try {
+    const data = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credId, protectionId })
+    });
+    const res = await data.json();
+    if (!data.ok) return showError('login-error', res.error);
+
+    session = { ...res.account, protectionId };
+    loadApp();
+    showScreen('screen-app');
+  } catch(e) {
+    showError('login-error', e.message);
+  }
+}
+
+document.getElementById('login-pid').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ─── App ─────────────────────────────────────────────────
+async function loadApp() {
+  if (!session) return;
+
+  document.getElementById('header-name').textContent = session.firstName + ' ' + session.lastName;
+  document.getElementById('header-credid').textContent = 'ID: ' + session.credId;
+  document.getElementById('balance-credid').textContent = 'CRED #' + session.credId;
+
+  if (session.isAdmin) {
+    document.getElementById('admin-nav-btn').style.display = '';
+  }
+
+  await refreshData();
+}
+
+async function refreshData() {
+  try {
+    const me = await api('GET', '/api/me');
+    session.balance = me.balance;
+    document.getElementById('balance-display').textContent = Number(me.balance).toLocaleString();
+
+    const txs = await api('GET', '/api/transactions');
+    renderTxList(txs);
+  } catch(e) {}
+}
+
+function renderTxList(txs) {
+  const el = document.getElementById('tx-list');
+  if (!txs || txs.length === 0) {
+    el.innerHTML = '<div class="tx-empty">No transactions yet.<br>Send your first gift! 🎁</div>';
+    return;
+  }
+
+  el.innerHTML = txs.map(tx => {
+    const received = tx.toCredId === session.credId;
+    const icon = received ? '🎁' : '📤';
+    const name = received
+      ? `From: ${tx.fromName === 'Admin (Chase Petrosky)' ? '👑 Admin' : tx.fromName}`
+      : `To: ${tx.toName}`;
+    const amtClass = received ? 'pos' : 'neg';
+    const amtStr = (received ? '+' : '-') + Number(tx.amount).toLocaleString() + ' CP';
+    return `
+      <div class="tx-item ${received ? 'received' : 'sent'}">
+        <div class="tx-icon">${icon}</div>
+        <div class="tx-info">
+          <div class="tx-name">${name}</div>
+          ${tx.message ? `<div class="tx-msg">💬 ${tx.message}</div>` : ''}
+          <div class="tx-date">${timeAgo(tx.createdAt)}</div>
+        </div>
+        <div class="tx-amount ${amtClass}">${amtStr}</div>
+      </div>`;
+  }).join('');
+}
+
+function doLogout() {
+  session = null;
+  document.getElementById('login-credid').value = '';
+  document.getElementById('login-pid').value = '';
+  showScreen('screen-login');
+}
+
+// ─── Send Modal ───────────────────────────────────────────
+function openSendModal() {
+  document.getElementById('send-credid').value = '';
+  document.getElementById('send-amount').value = '';
+  document.getElementById('send-msg').value = '';
+  document.getElementById('send-lookup').style.display = 'none';
+  document.getElementById('send-error').style.display = 'none';
+  document.getElementById('send-modal').classList.add('active');
+}
+
+function closeSendModal() {
+  document.getElementById('send-modal').classList.remove('active');
+}
+
+async function lookupRecipient() {
+  clearTimeout(lookupTimer);
+  const credId = document.getElementById('send-credid').value.trim();
+  const el = document.getElementById('send-lookup');
+  if (!/^\d{8}$/.test(credId)) { el.style.display = 'none'; return; }
+  lookupTimer = setTimeout(async () => {
+    try {
+      const data = await api('GET', '/api/lookup/' + credId);
+      el.textContent = `✅ ${data.firstName} ${data.lastName}`;
+      el.style.display = 'block';
+    } catch(e) {
+      el.textContent = '❌ User not found';
+      el.style.display = 'block';
+    }
+  }, 400);
+}
+
+async function doSend() {
+  const toCredId = document.getElementById('send-credid').value.trim();
+  const amount = parseInt(document.getElementById('send-amount').value);
+  const message = document.getElementById('send-msg').value.trim();
+
+  if (!/^\d{8}$/.test(toCredId)) return showError('send-error', 'Enter a valid 8-digit Cred ID.');
+  if (!amount || amount <= 0) return showError('send-error', 'Enter a valid amount.');
+
+  try {
+    const res = await api('POST', '/api/send', { toCredId, amount, message });
+    closeSendModal();
+    session.balance = res.newBalance;
+    document.getElementById('balance-display').textContent = Number(res.newBalance).toLocaleString();
+    playGiftSendAnimation();
+    setTimeout(() => refreshData(), 2800);
+  } catch(e) {
+    showError('send-error', e.message);
+  }
+}
+
+// ─── Gift Box Animation ───────────────────────────────────
+function playGiftSendAnimation() {
+  const overlay = document.getElementById('gift-overlay');
+  overlay.innerHTML = '';
+  overlay.classList.add('active');
+
+  // Main gift box from bottom center
+  const box = document.createElement('div');
+  box.className = 'gift-box';
+  box.textContent = '🎁';
+  box.style.left = (window.innerWidth / 2 - 32) + 'px';
+  box.style.bottom = '80px';
+  overlay.appendChild(box);
+
+  // Sparkles burst
+  const sparkles = ['✨','⭐','💛','🌟','🎊','💫'];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'gift-sparkle';
+    s.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+    const angle = (Math.PI * 2 / 10) * i;
+    const dist = 60 + Math.random() * 80;
+    s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    s.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    s.style.left = (window.innerWidth / 2 - 12) + 'px';
+    s.style.bottom = '120px';
+    s.style.animationDelay = (Math.random() * 0.3) + 's';
+    overlay.appendChild(s);
+  }
+
+  // Sky flash
+  const flash = document.createElement('div');
+  flash.style.cssText = `position:fixed;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,200,0,0.3),transparent 60%);animation:fadeFlash 2s forwards;pointer-events:none;`;
+  overlay.appendChild(flash);
+
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeFlash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}';
+  document.head.appendChild(style);
+
+  // Success popup
+  setTimeout(() => {
+    const popup = document.createElement('div');
+    popup.className = 'gift-msg-popup';
+    popup.innerHTML = '🎁 Gift sent into the sky! ✨';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2600);
+  }, 400);
+
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    overlay.innerHTML = '';
+  }, 3000);
+}
+
+// ─── Admin Panel ──────────────────────────────────────────
+function goAdmin() {
+  loadAdmin();
+  showScreen('screen-admin');
+}
+
+function goApp() {
+  showScreen('screen-app');
+  refreshData();
+}
+
+function adminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  const tabs = ['accounts','give','create','txlog'];
+  const idx = tabs.indexOf(tab);
+  document.querySelectorAll('.admin-tab')[idx].classList.add('active');
+  document.getElementById('apanel-' + tab).classList.add('active');
+
+  if (tab === 'accounts') loadAdminAccounts();
+  if (tab === 'txlog') loadAdminTxLog();
+}
+
+async function loadAdmin() {
+  loadAdminAccounts();
+}
+
+async function loadAdminAccounts() {
+  try {
+    const accounts = await api('GET', '/api/admin/accounts');
+    const totalCP = accounts.reduce((s, a) => s + a.balance, 0);
+
+    document.getElementById('admin-stats').innerHTML = `
+      <div class="stat-box"><div class="sv">${accounts.length}</div><div class="sl">Total Accounts</div></div>
+      <div class="stat-box"><div class="sv">${Number(totalCP).toLocaleString()}</div><div class="sl">Total CP in Circulation</div></div>
+    `;
+
+    document.getElementById('admin-accounts-list').innerHTML = accounts.map(a => `
+      <div class="account-row">
+        <div>
+          <div class="ar-name">${a.isAdmin ? '👑 ' : ''}${a.firstName} ${a.lastName}</div>
+          <div class="ar-id">Cred: ${a.credId} &nbsp;|&nbsp; Joined: ${new Date(a.createdAt).toLocaleDateString()}</div>
+        </div>
+        <div class="ar-bal">${Number(a.balance).toLocaleString()} CP</div>
+        ${!a.isAdmin ? `<button class="btn btn-red btn-sm" onclick="adminDelete('${a.credId}','${a.firstName} ${a.lastName}')">🗑</button>` : ''}
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+async function adminDelete(credId, name) {
+  if (!confirm(`Delete account for ${name} (${credId})? This cannot be undone.`)) return;
+  try {
+    await api('DELETE', '/api/admin/delete-account/' + credId);
+    loadAdminAccounts();
+  } catch(e) { alert(e.message); }
+}
+
+async function loadAdminTxLog() {
+  try {
+    const txs = await api('GET', '/api/admin/transactions');
+    const el = document.getElementById('admin-tx-list');
+    if (!txs.length) { el.innerHTML = '<div class="tx-empty">No transactions yet.</div>'; return; }
+    el.innerHTML = txs.map(tx => `
+      <div class="tx-item received" style="border-left-color:#8e44ad">
+        <div class="tx-icon">💸</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.fromName} → ${tx.toName}</div>
+          ${tx.message ? `<div class="tx-msg">💬 ${tx.message}</div>` : ''}
+          <div class="tx-date">${timeAgo(tx.createdAt)}</div>
+        </div>
+        <div class="tx-amount pos">+${Number(tx.amount).toLocaleString()} CP</div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+async function adminGive() {
+  const credId = document.getElementById('give-credid').value.trim();
+  const amount = parseFloat(document.getElementById('give-amount').value);
+  if (!/^\d{8}$/.test(credId)) return showError('give-error', 'Enter a valid 8-digit Cred ID.');
+  if (isNaN(amount) || amount === 0) return showError('give-error', 'Enter a non-zero amount.');
+  try {
+    const res = await api('POST', '/api/admin/give-money', { credId, amount });
+    showSuccess('give-success', `✅ Done! New balance: ${Number(res.newBalance).toLocaleString()} CP`);
+    document.getElementById('give-credid').value = '';
+    document.getElementById('give-amount').value = '';
+    document.getElementById('give-lookup').style.display = 'none';
+  } catch(e) { showError('give-error', e.message); }
+}
+
+// Lookup in give panel
+document.getElementById('give-credid').addEventListener('input', async function() {
+  const credId = this.value.trim();
+  const el = document.getElementById('give-lookup');
+  if (!/^\d{8}$/.test(credId)) { el.style.display = 'none'; return; }
+  try {
+    const data = await api('GET', '/api/lookup/' + credId);
+    el.textContent = `✅ ${data.firstName} ${data.lastName}`;
+    el.style.display = 'block';
+  } catch(e) {
+    el.textContent = '❌ User not found';
+    el.style.display = 'block';
+  }
+});
+
+async function adminCreate() {
+  const firstName = document.getElementById('new-first').value.trim();
+  const lastName = document.getElementById('new-last').value.trim();
+  const credId = document.getElementById('new-credid').value.trim();
+  const protectionId = document.getElementById('new-pid').value.trim();
+  const startingBalance = parseFloat(document.getElementById('new-balance').value) || 0;
+
+  if (!firstName || !lastName) return showError('create-error', 'Enter first and last name.');
+  if (!/^\d{8}$/.test(credId)) return showError('create-error', 'Cred ID must be exactly 8 digits.');
+  if (!/^\d{4}$/.test(protectionId)) return showError('create-error', 'Protection ID must be exactly 4 digits.');
+
+  try {
+    await api('POST', '/api/admin/create-account', { firstName, lastName, credId, protectionId, startingBalance });
+    showSuccess('create-success', `✅ Account created for ${firstName} ${lastName}!`);
+    ['new-first','new-last','new-credid','new-pid'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('new-balance').value = '0';
+  } catch(e) { showError('create-error', e.message); }
+}
+
+// Close modal on overlay click
+document.getElementById('send-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSendModal();
+});
+
+// Enter key on login credid
+document.getElementById('login-credid').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('login-pid').focus();
+});
+</script>
+</body>
+</html>
